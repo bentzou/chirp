@@ -1,16 +1,12 @@
 (() => {
-  // ── Color System ──────────────────────────────────────────────────
+  // ── Chirpy highlight color ────────────────────────────────────────
 
-  const COLORS = {
-    amber:  { bg: "rgba(245, 158, 11, 0.3)", border: "rgba(245, 158, 11, 0.6)", hover: "rgba(245, 158, 11, 0.5)", solid: "#f59e0b" },
-    blue:   { bg: "rgba(59, 130, 246, 0.3)",  border: "rgba(59, 130, 246, 0.6)",  hover: "rgba(59, 130, 246, 0.5)",  solid: "#3b82f6" },
-    green:  { bg: "rgba(34, 197, 94, 0.3)",   border: "rgba(34, 197, 94, 0.6)",   hover: "rgba(34, 197, 94, 0.5)",   solid: "#22c55e" },
-    pink:   { bg: "rgba(236, 72, 153, 0.3)",  border: "rgba(236, 72, 153, 0.6)",  hover: "rgba(236, 72, 153, 0.5)",  solid: "#ec4899" },
-    purple: { bg: "rgba(168, 85, 247, 0.3)",  border: "rgba(168, 85, 247, 0.6)",  hover: "rgba(168, 85, 247, 0.5)",  solid: "#a855f7" },
-    red:    { bg: "rgba(239, 68, 68, 0.3)",   border: "rgba(239, 68, 68, 0.6)",   hover: "rgba(239, 68, 68, 0.5)",   solid: "#ef4444" },
+  const CHIRPY_COLOR = {
+    bg: "rgba(245, 158, 11, 0.35)",
+    border: "rgba(245, 158, 11, 0.6)",
+    hover: "rgba(245, 158, 11, 0.5)",
+    solid: "#f59e0b",
   };
-
-  const DEFAULT_COLOR = "amber";
 
   /** Check if the extension context is still valid (survives extension reload) */
   function contextValid() {
@@ -49,6 +45,75 @@
     }
   }
 
+  /** Get surrounding text for a range (used for text-search restoration) */
+  function getRangeContext(range) {
+    const prefix = range.startContainer.textContent.slice(Math.max(0, range.startOffset - 32), range.startOffset);
+    const suffix = range.endContainer.textContent.slice(range.endOffset, range.endOffset + 32);
+    return { prefix, suffix };
+  }
+
+  /** Find a text string in the page and return a Range, using prefix/suffix to disambiguate */
+  function findTextRange(text, prefix, suffix) {
+    const body = document.body;
+    const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    // Build a flat string and map each char to its text node + offset
+    let flat = "";
+    const map = []; // map[charIndex] = { node, offset }
+    for (const node of textNodes) {
+      const content = node.textContent;
+      for (let i = 0; i < content.length; i++) {
+        map.push({ node, offset: i });
+      }
+      flat += content;
+    }
+
+    // Search for all occurrences of the text
+    let best = -1;
+    let bestScore = -1;
+    let searchFrom = 0;
+    while (true) {
+      const idx = flat.indexOf(text, searchFrom);
+      if (idx === -1) break;
+      // Score by how well prefix/suffix match
+      let score = 0;
+      if (prefix) {
+        const before = flat.slice(Math.max(0, idx - prefix.length), idx);
+        for (let i = 0; i < Math.min(before.length, prefix.length); i++) {
+          if (before[before.length - 1 - i] === prefix[prefix.length - 1 - i]) score++;
+        }
+      }
+      if (suffix) {
+        const after = flat.slice(idx + text.length, idx + text.length + suffix.length);
+        for (let i = 0; i < Math.min(after.length, suffix.length); i++) {
+          if (after[i] === suffix[i]) score++;
+        }
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        best = idx;
+      }
+      searchFrom = idx + 1;
+    }
+
+    if (best === -1) return null;
+
+    const start = map[best];
+    const end = map[best + text.length - 1];
+    if (!start || !end) return null;
+
+    try {
+      const range = document.createRange();
+      range.setStart(start.node, start.offset);
+      range.setEnd(end.node, end.offset + 1);
+      return range;
+    } catch {
+      return null;
+    }
+  }
+
   /** Get truncated page text for context */
   function getPageContext() {
     const text = document.body.innerText || "";
@@ -71,36 +136,20 @@
     tooltip = document.createElement("div");
     tooltip.className = "chirpy-tooltip";
 
-    // "Ask Chirpy" label — clicking highlights with default amber
-    const label = document.createElement("span");
-    label.className = "chirpy-tooltip-label";
-    label.textContent = "Ask Chirpy";
-    label.addEventListener("mousedown", (e) => {
+    const logo = document.createElement("img");
+    logo.className = "chirpy-tooltip-logo";
+    logo.src = chrome.runtime.getURL("icons/icon48.png");
+    logo.alt = "Chirpy";
+    tooltip.appendChild(logo);
+
+    tooltip.addEventListener("mousedown", (e) => {
       e.preventDefault();
       e.stopPropagation();
       const selText = selection.toString();
       const range = selection.getRangeAt(0);
-      highlightRange(range, selText, DEFAULT_COLOR);
+      highlightRange(range, selText);
       removeTooltip();
     });
-    tooltip.appendChild(label);
-
-    // Color dots
-    for (const [name, c] of Object.entries(COLORS)) {
-      const dot = document.createElement("span");
-      dot.className = "chirpy-color-dot";
-      dot.style.background = c.solid;
-      dot.title = name;
-      dot.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const selText = selection.toString();
-        const range = selection.getRangeAt(0);
-        highlightRange(range, selText, name);
-        removeTooltip();
-      });
-      tooltip.appendChild(dot);
-    }
 
     tooltip.style.left = x + "px";
     tooltip.style.top = y + "px";
@@ -119,10 +168,8 @@
       // Don't show tooltip if click is inside our bubble
       if (e.target.closest?.("chirpy-bubble-host")) return;
 
-      const range = sel.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-      const x = rect.left + rect.width / 2 - 80 + window.scrollX;
-      const y = rect.top - 36 + window.scrollY;
+      const x = e.pageX - 14;
+      const y = e.pageY - 40;
       showTooltip(x, y, sel);
     }, 10);
   });
@@ -140,15 +187,16 @@
   // ── Highlighting ──────────────────────────────────────────────────
 
   /** Wrap a Range in <chirpy-hl> elements and persist */
-  function highlightRange(range, selText, color) {
+  function highlightRange(range, selText) {
     const id = generateId();
-    color = color || DEFAULT_COLOR;
 
     // Serialize range before modifying DOM
+    const ctx = getRangeContext(range);
     const serialized = {
       id,
       text: selText,
-      color,
+      prefix: ctx.prefix,
+      suffix: ctx.suffix,
       startXPath: getXPath(range.startContainer),
       startOffset: range.startOffset,
       endXPath: getXPath(range.endContainer),
@@ -156,7 +204,7 @@
       messages: [],
     };
 
-    wrapRangeInHighlight(range, id, color);
+    wrapRangeInHighlight(range, id);
     window.getSelection().removeAllRanges();
 
     // Persist, then open bubble with auto-context
@@ -168,24 +216,24 @@
         highlight: serialized,
       },
       () => {
-        openBubble(id, selText, [], color);
+        openBubble(id, selText, []);
         // Auto-ask for context
         const messagesArea = bubbleShadow?.querySelector(".chirpy-messages");
         if (messagesArea) {
-          sendMessage(id, selText, "Briefly explain what this means or why it matters.", messagesArea, { hidden: true });
+          sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
         }
       }
     );
   }
 
   /** Wraps the given range's text nodes in <chirpy-hl> custom elements */
-  function wrapRangeInHighlight(range, id, color) {
-    color = color || DEFAULT_COLOR;
-    const c = COLORS[color] || COLORS[DEFAULT_COLOR];
-
+  function wrapRangeInHighlight(range, id) {
     // Collect text nodes in the range
     const textNodes = [];
-    const walker = document.createTreeWalker(range.commonAncestorContainer, NodeFilter.SHOW_TEXT, {
+    const root = range.commonAncestorContainer.nodeType === Node.TEXT_NODE
+      ? range.commonAncestorContainer.parentNode
+      : range.commonAncestorContainer;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
         const nodeRange = document.createRange();
         nodeRange.selectNodeContents(node);
@@ -207,16 +255,14 @@
 
       const hl = document.createElement("chirpy-hl");
       hl.dataset.id = id;
-      hl.dataset.color = color;
-      hl.style.backgroundColor = c.bg;
-      hl.style.borderBottom = "2px solid " + c.border;
+      hl.style.backgroundColor = CHIRPY_COLOR.bg;
+      hl.style.borderBottom = "2px solid " + CHIRPY_COLOR.border;
 
-      // Hover handlers
       hl.addEventListener("mouseenter", () => {
-        hl.style.backgroundColor = c.hover;
+        hl.style.backgroundColor = CHIRPY_COLOR.hover;
       });
       hl.addEventListener("mouseleave", () => {
-        hl.style.backgroundColor = c.bg;
+        hl.style.backgroundColor = CHIRPY_COLOR.bg;
       });
 
       nodeRange.surroundContents(hl);
@@ -225,23 +271,44 @@
 
   // ── Restore highlights on page load ───────────────────────────────
 
+  /** IDs already restored — prevents double-wrapping on retry */
+  const restoredIds = new Set();
+
   function restoreHighlights() {
     if (!contextValid()) return;
     chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
-      if (!highlights || !highlights.length) return;
+      if (chrome.runtime.lastError || !highlights || !highlights.length) return;
 
       for (const hl of highlights) {
+        if (restoredIds.has(hl.id)) continue;
+
+        let range = null;
+
+        // Try XPath first (fast, exact)
         try {
           const startNode = resolveXPath(hl.startXPath);
           const endNode = resolveXPath(hl.endXPath);
-          if (!startNode || !endNode) continue;
-
-          const range = document.createRange();
-          range.setStart(startNode, hl.startOffset);
-          range.setEnd(endNode, hl.endOffset);
-          wrapRangeInHighlight(range, hl.id, hl.color || DEFAULT_COLOR);
+          if (startNode && endNode) {
+            range = document.createRange();
+            range.setStart(startNode, hl.startOffset);
+            range.setEnd(endNode, hl.endOffset);
+            // Verify the resolved range matches the expected text
+            if (range.toString() !== hl.text) range = null;
+          }
         } catch {
-          // Range may no longer be valid if page content changed
+          range = null;
+        }
+
+        // Fall back to text search with context matching
+        if (!range) {
+          range = findTextRange(hl.text, hl.prefix || "", hl.suffix || "");
+        }
+
+        if (range) {
+          try {
+            wrapRangeInHighlight(range, hl.id);
+            restoredIds.add(hl.id);
+          } catch { /* skip */ }
         }
       }
     });
@@ -291,31 +358,13 @@
     document.body.appendChild(bubbleHost);
   }
 
-  function openBubble(highlightId, selText, messages, color) {
+  function openBubble(highlightId, selText, messages) {
     ensureBubbleHost();
     currentHighlightId = highlightId;
-
-    color = color || DEFAULT_COLOR;
-    const c = COLORS[color] || COLORS[DEFAULT_COLOR];
 
     // Clear previous bubble content (keep <link>)
     const existing = bubbleShadow.querySelector(".chirpy-bubble");
     if (existing) existing.remove();
-
-    // Remove any previous dynamic theme style
-    const oldStyle = bubbleShadow.querySelector("#chirpy-theme-style");
-    if (oldStyle) oldStyle.remove();
-
-    // Inject dynamic color theme
-    const themeStyle = document.createElement("style");
-    themeStyle.id = "chirpy-theme-style";
-    themeStyle.textContent = `
-      .chirpy-msg-user { background: ${c.solid}; }
-      .chirpy-send { background: ${c.solid}; }
-      .chirpy-send:hover { background: ${c.border}; }
-      .chirpy-input:focus { border-color: ${c.solid}; box-shadow: 0 0 0 2px ${c.bg}; }
-    `;
-    bubbleShadow.appendChild(themeStyle);
 
     const bubble = document.createElement("div");
     bubble.className = "chirpy-bubble";
@@ -323,27 +372,68 @@
     // Header
     const header = document.createElement("div");
     header.className = "chirpy-header";
-    header.style.background = c.solid;
+
+    const logo = document.createElement("img");
+    logo.className = "chirpy-logo";
+    logo.src = chrome.runtime.getURL("icons/icon16.png");
+    logo.alt = "";
+
+    const brand = document.createElement("span");
+    brand.className = "chirpy-brand";
+    brand.textContent = "Chirpy";
+
+    const sep = document.createElement("span");
+    sep.className = "chirpy-sep";
+    sep.textContent = "|";
 
     const title = document.createElement("span");
     title.className = "chirpy-title";
-    title.textContent = selText.length > 60 ? selText.slice(0, 57) + "..." : selText;
+    title.textContent = selText.length > 40 ? selText.slice(0, 37) + "\u2026" : selText;
     title.title = selText;
+
+    const minBtn = document.createElement("button");
+    minBtn.className = "chirpy-minimize";
+    minBtn.textContent = "\u2013";
+    minBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      bubble.classList.toggle("chirpy-minimized");
+    });
+
+    const expandBtn = document.createElement("button");
+    expandBtn.className = "chirpy-expand";
+    expandBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>';
+    expandBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      bubble.classList.toggle("chirpy-expanded");
+    });
 
     const closeBtn = document.createElement("button");
     closeBtn.className = "chirpy-close";
     closeBtn.textContent = "\u00d7";
-    closeBtn.addEventListener("click", () => closeBubble());
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeBubble();
+    });
 
+    header.addEventListener("click", () => {
+      bubble.classList.toggle("chirpy-minimized");
+    });
+
+    header.appendChild(logo);
+    header.appendChild(brand);
+    header.appendChild(sep);
     header.appendChild(title);
+    header.appendChild(minBtn);
+    header.appendChild(expandBtn);
     header.appendChild(closeBtn);
 
     // Messages area
     const messagesArea = document.createElement("div");
     messagesArea.className = "chirpy-messages";
 
-    // Render existing messages
+    // Render existing messages (skip hidden auto-asks)
     for (const m of messages) {
+      if (m.hidden) continue;
       appendMessage(messagesArea, m.role, m.content);
     }
 
@@ -402,6 +492,65 @@
     return div;
   }
 
+  // ── Inline API key setup form ─────────────────────────────────────
+
+  function renderSetupForm(container, highlightId, selText, messagesArea) {
+    container.textContent = "";
+    container.classList.remove("chirpy-msg-error");
+    container.classList.add("chirpy-setup-form");
+
+    const label = document.createElement("div");
+    label.className = "chirpy-setup-label";
+    label.textContent = "Add an API key to get started";
+    container.appendChild(label);
+
+    const providerSelect = document.createElement("select");
+    providerSelect.className = "chirpy-setup-select";
+    for (const [value, name] of [["anthropic", "Anthropic"], ["google", "Google Gemini"], ["openai", "OpenAI"]]) {
+      const opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = name;
+      providerSelect.appendChild(opt);
+    }
+    container.appendChild(providerSelect);
+
+    const keyInput = document.createElement("input");
+    keyInput.type = "password";
+    keyInput.className = "chirpy-setup-input";
+    keyInput.placeholder = "Paste your API key";
+    container.appendChild(keyInput);
+
+    const saveBtn = document.createElement("button");
+    saveBtn.className = "chirpy-send chirpy-setup-save";
+    saveBtn.textContent = "Save & Retry";
+    container.appendChild(saveBtn);
+
+    // Pre-fill from storage
+    chrome.storage.sync.get(["provider", "apiKey"], (data) => {
+      if (data.provider) providerSelect.value = data.provider;
+      if (data.apiKey) keyInput.value = data.apiKey;
+    });
+
+    function handleSave() {
+      const key = keyInput.value.trim();
+      if (!key) { keyInput.focus(); return; }
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving...";
+      chrome.storage.sync.set({ provider: providerSelect.value, apiKey: key }, () => {
+        // Remove the setup form and retry
+        container.remove();
+        sendMessage(highlightId, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
+      });
+    }
+
+    saveBtn.addEventListener("click", handleSave);
+    keyInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleSave();
+    });
+
+    setTimeout(() => keyInput.focus(), 50);
+  }
+
   // ── Chat messaging ────────────────────────────────────────────────
 
   function sendMessage(highlightId, selText, userText, messagesArea, { hidden = false } = {}) {
@@ -411,7 +560,7 @@
       const hl = highlights?.find((h) => h.id === highlightId);
       const chatMessages = hl?.messages || [];
 
-      chatMessages.push({ role: "user", content: userText });
+      chatMessages.push({ role: "user", content: userText, hidden: hidden || undefined });
       if (!hidden) appendMessage(messagesArea, "user", userText);
 
       // Create assistant message placeholder with loading dots
@@ -455,7 +604,11 @@
           port.disconnect();
         } else if (msg.type === "error") {
           assistantDiv.classList.remove("chirpy-msg-loading");
-          assistantDiv.textContent = "Error: " + msg.error;
+          if (msg.code === "NO_API_KEY") {
+            renderSetupForm(assistantDiv, highlightId, selText, messagesArea);
+          } else {
+            assistantDiv.textContent = "Error: " + msg.error;
+          }
           assistantDiv.classList.add("chirpy-msg-error");
           port.disconnect();
         }
@@ -479,7 +632,7 @@
     chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
       const hl = highlights?.find((h) => h.id === id);
       if (hl) {
-        openBubble(id, hl.text, hl.messages || [], hl.color || DEFAULT_COLOR);
+        openBubble(id, hl.text, hl.messages || []);
       }
     });
   });
@@ -542,4 +695,6 @@
   // ── Init ──────────────────────────────────────────────────────────
 
   restoreHighlights();
+  // Retry after delay for dynamic pages / late service-worker startup
+  setTimeout(restoreHighlights, 1500);
 })();
