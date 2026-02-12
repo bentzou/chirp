@@ -159,6 +159,8 @@ chrome.runtime.onConnect.addListener((port) => {
         : "",
       "",
       "Be short and concise. Respond sparingly — if a message doesn't need a reply, don't force one.",
+      "Never restate what the highlighted text says or describe which website the user is on — they already know. Jump straight to insight, explanation, or answering the question.",
+      "Never end with follow-up questions like \"Would you like to know more?\" — just answer and stop.",
       "Use markdown formatting when it improves clarity.",
     ].join("\n");
 

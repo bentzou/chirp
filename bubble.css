@@ -103,6 +103,21 @@
   color: #991b1b;
 }
 
+/* Loading dots */
+.chirpy-msg-loading::after {
+  content: "\00b7 \00b7 \00b7";
+  letter-spacing: 2px;
+  animation: chirpy-dots 1s steps(3) infinite;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  width: 0;
+}
+
+@keyframes chirpy-dots {
+  to { width: 1.5em; }
+}
+
 /* ── Markdown prose styles for assistant messages ─────────────── */
 
 .chirpy-msg-assistant h1,

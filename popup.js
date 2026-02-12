@@ -24,6 +24,7 @@ tabBtns.forEach((btn) => {
     tabBtns.forEach((b) => b.classList.toggle("active", b === btn));
     tabPanels.forEach((p) => p.classList.toggle("active", p.id === "panel-" + tab));
     if (tab === "annotations") loadAnnotations();
+    if (tab === "settings") apiKeyEl.focus();
   });
 });
 
@@ -47,6 +48,10 @@ chrome.storage.sync.get(["provider", "apiKey", "model"], (data) => {
   if (data.apiKey) apiKeyEl.value = data.apiKey;
   if (data.model) modelEl.value = data.model;
   updatePlaceholder();
+});
+
+apiKeyEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") saveBtn.click();
 });
 
 saveBtn.addEventListener("click", () => {

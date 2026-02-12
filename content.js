@@ -133,6 +133,10 @@
     }
   });
 
+  document.addEventListener("keydown", () => {
+    removeTooltip();
+  });
+
   // ── Highlighting ──────────────────────────────────────────────────
 
   /** Wrap a Range in <chirpy-hl> elements and persist */
@@ -168,7 +172,7 @@
         // Auto-ask for context
         const messagesArea = bubbleShadow?.querySelector(".chirpy-messages");
         if (messagesArea) {
-          sendMessage(id, selText, "Give me a couple sentences of context about this text.", messagesArea, { hidden: true });
+          sendMessage(id, selText, "Briefly explain what this means or why it matters.", messagesArea, { hidden: true });
         }
       }
     );
@@ -410,8 +414,9 @@
       chatMessages.push({ role: "user", content: userText });
       if (!hidden) appendMessage(messagesArea, "user", userText);
 
-      // Create assistant message placeholder
+      // Create assistant message placeholder with loading dots
       const assistantDiv = appendMessage(messagesArea, "assistant", "");
+      assistantDiv.classList.add("chirpy-msg-loading");
 
       // Open port for streaming
       const port = chrome.runtime.connect({ name: "chirpy-chat" });
@@ -427,6 +432,7 @@
 
       port.onMessage.addListener((msg) => {
         if (msg.type === "delta") {
+          assistantDiv.classList.remove("chirpy-msg-loading");
           assistantText += msg.text;
           // Re-render markdown on each delta
           assistantDiv.innerHTML = renderMarkdown(assistantText);
@@ -448,6 +454,7 @@
           }
           port.disconnect();
         } else if (msg.type === "error") {
+          assistantDiv.classList.remove("chirpy-msg-loading");
           assistantDiv.textContent = "Error: " + msg.error;
           assistantDiv.classList.add("chirpy-msg-error");
           port.disconnect();
