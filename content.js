@@ -375,7 +375,7 @@
 
     const logo = document.createElement("img");
     logo.className = "chirpy-logo";
-    logo.src = chrome.runtime.getURL("icons/icon16.png");
+    logo.src = chrome.runtime.getURL("icons/icon48.png");
     logo.alt = "";
 
     const brand = document.createElement("span");
