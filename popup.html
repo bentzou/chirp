@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Chirpy</h1>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="annotations">Annotations</button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-annotations">
+      <div id="annotations-list"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-settings">
+      <label for="provider">AI Provider</label>
+      <select id="provider">
+        <option value="openai">OpenAI</option>
+        <option value="anthropic">Anthropic</option>
+        <option value="google">Google Gemini</option>
+      </select>
+
+      <label for="apiKey">API Key</label>
+      <input type="password" id="apiKey" placeholder="Enter your API key">
+
+      <label for="model">Model</label>
+      <input type="text" id="model" placeholder="">
+
+      <button id="save">Save</button>
+      <div id="status" class="status"></div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

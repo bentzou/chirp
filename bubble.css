@@ -1,0 +1,272 @@
+/* Chat bubble styles — lives inside Shadow DOM */
+
+.chirpy-bubble {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 380px;
+  max-height: 520px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  z-index: 2147483647;
+  overflow: hidden;
+  resize: both;
+  min-width: 280px;
+  min-height: 200px;
+}
+
+/* Header */
+.chirpy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #f59e0b;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.chirpy-title {
+  font-weight: 600;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.chirpy-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.chirpy-close:hover {
+  opacity: 1;
+}
+
+/* Messages */
+.chirpy-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chirpy-msg {
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  line-height: 1.45;
+  word-wrap: break-word;
+  font-size: 13px;
+}
+
+.chirpy-msg-user {
+  align-self: flex-end;
+  background: #f59e0b;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.chirpy-msg-user p { margin: 4px 0; }
+.chirpy-msg-user p:first-child { margin-top: 0; }
+.chirpy-msg-user p:last-child { margin-bottom: 0; }
+.chirpy-msg-user code { background: rgba(255, 255, 255, 0.2); padding: 1px 4px; border-radius: 3px; font-size: 0.9em; }
+.chirpy-msg-user pre { background: rgba(0, 0, 0, 0.2); padding: 6px 8px; border-radius: 6px; overflow-x: auto; margin: 4px 0; font-size: 12px; }
+.chirpy-msg-user pre code { background: none; padding: 0; }
+.chirpy-msg-user a { color: #fff; text-decoration: underline; }
+
+.chirpy-msg-assistant {
+  align-self: flex-start;
+  background: #f3f4f6;
+  color: #1a1a1a;
+  border-bottom-left-radius: 4px;
+}
+
+.chirpy-msg-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ── Markdown prose styles for assistant messages ─────────────── */
+
+.chirpy-msg-assistant h1,
+.chirpy-msg-assistant h2,
+.chirpy-msg-assistant h3,
+.chirpy-msg-assistant h4,
+.chirpy-msg-assistant h5,
+.chirpy-msg-assistant h6 {
+  margin: 8px 0 4px;
+  line-height: 1.3;
+}
+
+.chirpy-msg-assistant h1 { font-size: 1.2em; }
+.chirpy-msg-assistant h2 { font-size: 1.1em; }
+.chirpy-msg-assistant h3 { font-size: 1.05em; }
+
+.chirpy-msg-assistant p {
+  margin: 4px 0;
+}
+
+.chirpy-msg-assistant p:first-child {
+  margin-top: 0;
+}
+
+.chirpy-msg-assistant p:last-child {
+  margin-bottom: 0;
+}
+
+.chirpy-msg-assistant ul,
+.chirpy-msg-assistant ol {
+  margin: 4px 0;
+  padding-left: 1.4em;
+}
+
+.chirpy-msg-assistant li {
+  margin: 2px 0;
+}
+
+.chirpy-msg-assistant code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+}
+
+.chirpy-msg-assistant pre {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 8px 10px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 6px 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.chirpy-msg-assistant pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.chirpy-msg-assistant blockquote {
+  border-left: 3px solid #d1d5db;
+  margin: 6px 0;
+  padding: 2px 10px;
+  color: #6b7280;
+}
+
+.chirpy-msg-assistant a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.chirpy-msg-assistant a:hover {
+  color: #1d4ed8;
+}
+
+.chirpy-msg-assistant strong {
+  font-weight: 600;
+}
+
+.chirpy-msg-assistant em {
+  font-style: italic;
+}
+
+.chirpy-msg-assistant hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 8px 0;
+}
+
+.chirpy-msg-assistant table {
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 12px;
+  width: 100%;
+}
+
+.chirpy-msg-assistant th,
+.chirpy-msg-assistant td {
+  border: 1px solid #d1d5db;
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.chirpy-msg-assistant th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+/* Input bar */
+.chirpy-input-bar {
+  display: flex;
+  padding: 10px 12px;
+  border-top: 1px solid #e5e7eb;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.chirpy-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+}
+
+.chirpy-input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.chirpy-send {
+  padding: 8px 16px;
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chirpy-send:hover {
+  background: #d97706;
+}
+
+/* Scrollbar styling */
+.chirpy-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chirpy-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chirpy-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
