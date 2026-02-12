@@ -36,7 +36,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["bubble.css", "lib/marked.min.js"],
+      "resources": ["bubble.css", "lib/marked.min.js", "icons/icon16.png", "icons/icon48.png"],
       "matches": ["<all_urls>"]
     }
   ]

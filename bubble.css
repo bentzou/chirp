@@ -25,23 +25,46 @@
 .chirpy-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 10px 14px;
+  gap: 8px;
   background: #f59e0b;
   color: #fff;
+  flex-shrink: 0;
+  min-width: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chirpy-logo {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.chirpy-brand {
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.chirpy-sep {
+  opacity: 0.5;
   flex-shrink: 0;
 }
 
 .chirpy-title {
-  font-weight: 600;
+  font-weight: 400;
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: 1;
-  margin-right: 8px;
+  min-width: 0;
+  opacity: 0.85;
 }
 
+.chirpy-minimize,
+.chirpy-expand,
 .chirpy-close {
   background: none;
   border: none;
@@ -51,10 +74,38 @@
   padding: 0 2px;
   line-height: 1;
   opacity: 0.8;
+  flex-shrink: 0;
 }
 
+.chirpy-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chirpy-minimize:hover,
+.chirpy-expand:hover,
 .chirpy-close:hover {
   opacity: 1;
+}
+
+/* Minimized state */
+.chirpy-minimized {
+  max-height: none;
+  min-height: 0;
+  resize: none;
+}
+
+.chirpy-minimized .chirpy-messages,
+.chirpy-minimized .chirpy-input-bar {
+  display: none;
+}
+
+/* Expanded state */
+.chirpy-expanded {
+  max-height: none;
+  height: calc(100vh - 40px);
+  top: 20px;
 }
 
 /* Messages */
@@ -103,19 +154,37 @@
   color: #991b1b;
 }
 
-/* Loading dots */
-.chirpy-msg-loading::after {
-  content: "\00b7 \00b7 \00b7";
-  letter-spacing: 2px;
-  animation: chirpy-dots 1s steps(3) infinite;
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
-  width: 0;
+/* Loading dots — three-dot typing indicator */
+.chirpy-msg-loading {
+  display: flex;
+  align-items: center;
 }
 
-@keyframes chirpy-dots {
-  to { width: 1.5em; }
+.chirpy-msg-loading::after {
+  content: "";
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  margin-right: 20px;
+  background: #9ca3af;
+  box-shadow: 10px 0 0 #9ca3af, 20px 0 0 #9ca3af;
+  animation: chirpy-typing 1.2s ease-in-out infinite;
+}
+
+@keyframes chirpy-typing {
+  0%, 100% {
+    background: #9ca3af;
+    box-shadow: 10px 0 0 #d1d5db, 20px 0 0 #d1d5db;
+  }
+  33% {
+    background: #d1d5db;
+    box-shadow: 10px 0 0 #9ca3af, 20px 0 0 #d1d5db;
+  }
+  66% {
+    background: #d1d5db;
+    box-shadow: 10px 0 0 #d1d5db, 20px 0 0 #9ca3af;
+  }
 }
 
 /* ── Markdown prose styles for assistant messages ─────────────── */
@@ -270,6 +339,52 @@
 
 .chirpy-send:hover {
   background: #d97706;
+}
+
+/* Inline setup form */
+.chirpy-setup-form {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.chirpy-setup-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.chirpy-setup-select,
+.chirpy-setup-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.chirpy-setup-select:focus,
+.chirpy-setup-input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.chirpy-setup-save {
+  width: 100%;
+}
+
+.chirpy-setup-save:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 /* Scrollbar styling */

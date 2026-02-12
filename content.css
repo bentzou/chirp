@@ -9,46 +9,28 @@ chirpy-hl {
 .chirpy-tooltip {
   position: absolute;
   z-index: 2147483647;
-  background: #fff;
-  color: #374151;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 6px;
-  border-radius: 8px;
+  background: #f59e0b;
+  padding: 6px;
+  border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   user-select: none;
-  white-space: nowrap;
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 5px;
-}
-
-.chirpy-tooltip-label {
-  padding: 0 4px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.chirpy-tooltip-label:hover {
-  opacity: 0.8;
-}
-
-.chirpy-color-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  justify-content: center;
   transition: transform 0.12s;
-  flex-shrink: 0;
 }
 
-.chirpy-color-dot:hover {
-  transform: scale(1.25);
-  border-color: rgba(0, 0, 0, 0.3);
+.chirpy-tooltip:hover {
+  transform: scale(1.1);
+}
+
+.chirpy-tooltip-logo {
+  width: 24px;
+  height: 24px;
+  display: block;
+  border-radius: 50%;
 }
 
 /* Keep the bubble host out of page layout */
