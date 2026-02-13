@@ -7,10 +7,12 @@ chirpy-hl {
 
 /* Tooltip that appears on text selection */
 .chirpy-tooltip {
+  all: initial;
   position: absolute;
   z-index: 2147483647;
   background: #f59e0b;
-  padding: 6px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -20,6 +22,7 @@ chirpy-hl {
   align-items: center;
   justify-content: center;
   transition: transform 0.12s;
+  box-sizing: border-box;
 }
 
 .chirpy-tooltip:hover {

@@ -160,6 +160,15 @@
 
   function showTooltip(x, y, selection) {
     removeTooltip();
+
+    // Capture selection data eagerly — the live Selection object can be
+    // cleared by the host page's JS before the user clicks the tooltip.
+    let selText, range;
+    if (selection && !selection.isCollapsed) {
+      selText = selection.toString();
+      try { range = selection.getRangeAt(0).cloneRange(); } catch (_) {}
+    }
+
     tooltip = document.createElement("div");
     tooltip.className = "chirpy-tooltip";
 
@@ -169,12 +178,10 @@
     logo.alt = "Chirpy";
     tooltip.appendChild(logo);
 
-    if (selection) {
+    if (selText && range) {
       tooltip.addEventListener("mousedown", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const selText = selection.toString();
-        const range = selection.getRangeAt(0);
         highlightRange(range, selText);
       });
     }
@@ -204,6 +211,7 @@
   });
 
   document.addEventListener("mousedown", (e) => {
+    if (e.detail >= 2) return; // Don't remove on multi-click (prevents tooltip blink on triple-click)
     if (tooltip && !tooltip.contains(e.target) && !currentHighlightId && !e.target.closest?.("chirpy-hl")) {
       removeTooltip();
     }
