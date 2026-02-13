@@ -183,8 +183,12 @@ chrome.runtime.onConnect.addListener((port) => {
       });
 
       if (!resp.ok) {
-        const errText = await resp.text();
-        port.postMessage({ type: "error", error: `API error ${resp.status}: ${errText}` });
+        if (resp.status === 401 || resp.status === 403) {
+          port.postMessage({ type: "error", error: "Invalid API key.", code: "INVALID_API_KEY" });
+        } else {
+          const errText = await resp.text();
+          port.postMessage({ type: "error", error: `API error ${resp.status}: ${errText}` });
+        }
         return;
       }
 

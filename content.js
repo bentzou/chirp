@@ -169,13 +169,15 @@
     logo.alt = "Chirpy";
     tooltip.appendChild(logo);
 
-    tooltip.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const selText = selection.toString();
-      const range = selection.getRangeAt(0);
-      highlightRange(range, selText);
-    });
+    if (selection) {
+      tooltip.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const selText = selection.toString();
+        const range = selection.getRangeAt(0);
+        highlightRange(range, selText);
+      });
+    }
 
     tooltip.style.left = x + "px";
     tooltip.style.top = y + "px";
@@ -188,7 +190,7 @@
     setTimeout(() => {
       const sel = window.getSelection();
       if (!sel || sel.isCollapsed || !sel.toString().trim()) {
-        removeTooltip();
+        if (!currentHighlightId && !e.target.closest?.("chirpy-hl") && !(tooltip && tooltip.contains(e.target))) removeTooltip();
         return;
       }
 
@@ -202,7 +204,7 @@
   });
 
   document.addEventListener("mousedown", (e) => {
-    if (tooltip && !tooltip.contains(e.target) && !currentHighlightId) {
+    if (tooltip && !tooltip.contains(e.target) && !currentHighlightId && !e.target.closest?.("chirpy-hl")) {
       removeTooltip();
     }
   });
@@ -549,14 +551,16 @@
 
   // ── Inline API key setup form ─────────────────────────────────────
 
-  function renderSetupForm(container, highlightId, selText, messagesArea) {
+  function renderSetupForm(container, highlightId, selText, messagesArea, code) {
     container.textContent = "";
     container.classList.remove("chirpy-msg-error");
     container.classList.add("chirpy-setup-form");
 
     const label = document.createElement("div");
     label.className = "chirpy-setup-label";
-    label.textContent = "Add an API key to get started";
+    label.textContent = code === "INVALID_API_KEY"
+      ? "Your API key was rejected. Please check it and try again."
+      : "Add an API key to get started";
     container.appendChild(label);
 
     const providerSelect = document.createElement("select");
@@ -570,7 +574,7 @@
     container.appendChild(providerSelect);
 
     const keyInput = document.createElement("input");
-    keyInput.type = "password";
+    keyInput.type = "text";
     keyInput.className = "chirpy-setup-input";
     keyInput.placeholder = "Paste your API key";
     container.appendChild(keyInput);
@@ -659,8 +663,8 @@
           port.disconnect();
         } else if (msg.type === "error") {
           assistantDiv.classList.remove("chirpy-msg-loading");
-          if (msg.code === "NO_API_KEY") {
-            renderSetupForm(assistantDiv, highlightId, selText, messagesArea);
+          if (msg.code === "NO_API_KEY" || msg.code === "INVALID_API_KEY") {
+            renderSetupForm(assistantDiv, highlightId, selText, messagesArea, msg.code);
           } else {
             assistantDiv.textContent = "Error: " + msg.error;
           }
@@ -682,6 +686,10 @@
 
     // If bubble is already open for this highlight, do nothing
     if (currentHighlightId === id) return;
+
+    // Show tooltip near the clicked highlight
+    const rect = hlEl.getBoundingClientRect();
+    showTooltip(rect.left + window.scrollX - 14, rect.top + window.scrollY - 40);
 
     if (!contextValid()) return;
     chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
