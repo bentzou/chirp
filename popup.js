@@ -13,6 +13,18 @@ const COLOR_SOLIDS = {
   red: "#ef4444",
 };
 
+// ── Enabled toggle ────────────────────────────────────────────────
+
+const enabledToggle = document.getElementById("enabled-toggle");
+
+chrome.storage.sync.get({ enabled: true }, (data) => {
+  enabledToggle.checked = data.enabled;
+});
+
+enabledToggle.addEventListener("change", () => {
+  chrome.storage.sync.set({ enabled: enabledToggle.checked });
+});
+
 // ── Tab switching ─────────────────────────────────────────────────
 
 const tabBtns = document.querySelectorAll(".tab-btn");
@@ -33,6 +45,7 @@ tabBtns.forEach((btn) => {
 const providerEl = document.getElementById("provider");
 const apiKeyEl = document.getElementById("apiKey");
 const modelEl = document.getElementById("model");
+const customInstructionsEl = document.getElementById("customInstructions");
 const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
 
@@ -43,10 +56,11 @@ function updatePlaceholder() {
 providerEl.addEventListener("change", updatePlaceholder);
 
 // Load saved settings
-chrome.storage.sync.get(["provider", "apiKey", "model"], (data) => {
+chrome.storage.sync.get(["provider", "apiKey", "model", "customInstructions"], (data) => {
   if (data.provider) providerEl.value = data.provider;
   if (data.apiKey) apiKeyEl.value = data.apiKey;
   if (data.model) modelEl.value = data.model;
+  if (data.customInstructions) customInstructionsEl.value = data.customInstructions;
   updatePlaceholder();
 });
 
@@ -59,6 +73,7 @@ saveBtn.addEventListener("click", () => {
     provider: providerEl.value,
     apiKey: apiKeyEl.value.trim(),
     model: modelEl.value.trim() || "",
+    customInstructions: customInstructionsEl.value.trim(),
   };
 
   if (!settings.apiKey) {

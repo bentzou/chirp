@@ -6,12 +6,13 @@ const DEFAULTS = {
 
 async function getSettings() {
   return new Promise((resolve) => {
-    chrome.storage.sync.get(["provider", "apiKey", "model"], (data) => {
+    chrome.storage.sync.get(["provider", "apiKey", "model", "customInstructions"], (data) => {
       const provider = data.provider || "openai";
       resolve({
         provider,
         apiKey: data.apiKey || "",
         model: data.model || DEFAULTS[provider],
+        customInstructions: data.customInstructions || "",
       });
     });
   });
@@ -167,6 +168,10 @@ chrome.runtime.onConnect.addListener((port) => {
       "Never end with follow-up questions like \"Would you like to know more?\" — just answer and stop.",
       "Use markdown formatting when it improves clarity.",
     ].join("\n");
+
+    if (settings.customInstructions) {
+      systemPrompt += "\n\nUser's custom instructions:\n" + settings.customInstructions;
+    }
 
     const req = buildRequest(settings, systemPrompt, msg.messages);
 

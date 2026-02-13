@@ -1,0 +1,11 @@
+{
+  "name": "chirpy",
+  "version": "1.27.0",
+  "private": true,
+  "description": "Highlight text on any webpage and chat with AI about it",
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "version": "bash scripts/sync-version.sh && git add manifest.json",
+    "release": "bash scripts/release.sh"
+  }
+}

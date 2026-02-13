@@ -8,6 +8,33 @@
     solid: "#f59e0b",
   };
 
+  // ── Enabled state ────────────────────────────────────────────────
+
+  let chirpyEnabled = true;
+
+  chrome.storage.sync.get({ enabled: true }, (data) => {
+    chirpyEnabled = data.enabled;
+  });
+
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.enabled) {
+      chirpyEnabled = changes.enabled.newValue;
+      toggleHighlightsVisibility(chirpyEnabled);
+    }
+  });
+
+  function toggleHighlightsVisibility(visible) {
+    document.querySelectorAll("chirpy-hl").forEach((el) => {
+      el.style.backgroundColor = visible ? CHIRPY_COLOR.bg : "transparent";
+      el.style.borderBottom = visible ? "2px solid " + CHIRPY_COLOR.border : "none";
+      el.style.pointerEvents = visible ? "" : "none";
+    });
+    if (!visible) {
+      removeTooltip();
+      closeBubble();
+    }
+  }
+
   /** Check if the extension context is still valid (survives extension reload) */
   function contextValid() {
     try { return !!chrome.runtime?.id; } catch { return false; }
@@ -157,6 +184,7 @@
   }
 
   document.addEventListener("mouseup", (e) => {
+    if (!chirpyEnabled) return;
     // Small delay to let selection finalize
     setTimeout(() => {
       const sel = window.getSelection();
@@ -259,10 +287,10 @@
       hl.style.borderBottom = "2px solid " + CHIRPY_COLOR.border;
 
       hl.addEventListener("mouseenter", () => {
-        hl.style.backgroundColor = CHIRPY_COLOR.hover;
+        if (chirpyEnabled) hl.style.backgroundColor = CHIRPY_COLOR.hover;
       });
       hl.addEventListener("mouseleave", () => {
-        hl.style.backgroundColor = CHIRPY_COLOR.bg;
+        if (chirpyEnabled) hl.style.backgroundColor = CHIRPY_COLOR.bg;
       });
 
       nodeRange.surroundContents(hl);
@@ -394,9 +422,23 @@
     const minBtn = document.createElement("button");
     minBtn.className = "chirpy-minimize";
     minBtn.textContent = "\u2013";
+    function setBubbleState(state) {
+      const isMinimized = bubble.classList.contains("chirpy-minimized");
+      const isExpanded = bubble.classList.contains("chirpy-expanded");
+
+      bubble.classList.remove("chirpy-minimized", "chirpy-expanded");
+
+      if (state === "minimized" && !isMinimized) {
+        bubble.classList.add("chirpy-minimized");
+      } else if (state === "expanded" && !isExpanded) {
+        bubble.classList.add("chirpy-expanded");
+      }
+      // else: back to normal (both removed)
+    }
+
     minBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      bubble.classList.toggle("chirpy-minimized");
+      setBubbleState("minimized");
     });
 
     const expandBtn = document.createElement("button");
@@ -404,7 +446,7 @@
     expandBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>';
     expandBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      bubble.classList.toggle("chirpy-expanded");
+      setBubbleState("expanded");
     });
 
     const closeBtn = document.createElement("button");
@@ -415,8 +457,9 @@
       closeBubble();
     });
 
-    header.addEventListener("click", () => {
-      bubble.classList.toggle("chirpy-minimized");
+    header.addEventListener("click", (e) => {
+      if (e.target.closest("button")) return;
+      setBubbleState("minimized");
     });
 
     header.appendChild(logo);
@@ -441,10 +484,17 @@
     const inputBar = document.createElement("div");
     inputBar.className = "chirpy-input-bar";
 
-    const input = document.createElement("input");
+    const input = document.createElement("textarea");
     input.className = "chirpy-input";
-    input.type = "text";
+    input.rows = 1;
     input.placeholder = "Ask about this text...";
+
+    function autoResize() {
+      input.style.height = "auto";
+      input.style.height = Math.min(input.scrollHeight, 120) + "px";
+    }
+
+    input.addEventListener("input", autoResize);
 
     const sendBtn = document.createElement("button");
     sendBtn.className = "chirpy-send";
@@ -454,12 +504,16 @@
       const text = input.value.trim();
       if (!text) return;
       input.value = "";
+      autoResize();
       sendMessage(highlightId, selText, text, messagesArea);
     }
 
     sendBtn.addEventListener("click", handleSend);
     input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleSend();
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
     });
 
     inputBar.appendChild(input);
@@ -574,7 +628,7 @@
         type: "chat",
         selection: selText,
         pageContext: getPageContext(),
-        messages: chatMessages,
+        messages: chatMessages.map(({ role, content }) => ({ role, content })),
       });
 
       let assistantText = "";
@@ -667,6 +721,13 @@
             el.style.backgroundColor = origBg;
           }, 800);
         }
+      }
+      // Open the chat bubble for this highlight
+      if (contextValid() && currentHighlightId !== msg.id) {
+        chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
+          const hl = highlights?.find((h) => h.id === msg.id);
+          if (hl) openBubble(msg.id, hl.text, hl.messages || []);
+        });
       }
       sendResponse({ ok: true });
       return;
