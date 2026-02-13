@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Chirpy",
-  "version": "1.27.1",
-  "version_name": "1.27.1",
+  "version": "1.0.0",
+  "version_name": "1.0.0",
   "description": "Highlight text on any webpage and chat with AI about it",
   "permissions": [
     "activeTab",
