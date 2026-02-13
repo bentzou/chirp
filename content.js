@@ -175,7 +175,6 @@
       const selText = selection.toString();
       const range = selection.getRangeAt(0);
       highlightRange(range, selText);
-      removeTooltip();
     });
 
     tooltip.style.left = x + "px";
@@ -203,13 +202,13 @@
   });
 
   document.addEventListener("mousedown", (e) => {
-    if (tooltip && !tooltip.contains(e.target)) {
+    if (tooltip && !tooltip.contains(e.target) && !currentHighlightId) {
       removeTooltip();
     }
   });
 
   document.addEventListener("keydown", () => {
-    removeTooltip();
+    if (!currentHighlightId) removeTooltip();
   });
 
   // ── Highlighting ──────────────────────────────────────────────────
@@ -430,6 +429,7 @@
 
       if (state === "minimized" && !isMinimized) {
         bubble.classList.add("chirpy-minimized");
+        removeTooltip();
       } else if (state === "expanded" && !isExpanded) {
         bubble.classList.add("chirpy-expanded");
       }
@@ -533,6 +533,7 @@
     const existing = bubbleShadow.querySelector(".chirpy-bubble");
     if (existing) existing.remove();
     currentHighlightId = null;
+    removeTooltip();
   }
 
   function appendMessage(container, role, content) {
