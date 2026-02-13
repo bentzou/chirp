@@ -6,9 +6,7 @@
   "description": "Highlight text on any webpage and chat with AI about it",
   "permissions": [
     "activeTab",
-    "storage",
-    "contextMenus",
-    "tabs"
+    "storage"
   ],
   "host_permissions": [
     "https://api.openai.com/*",
