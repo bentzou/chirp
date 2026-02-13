@@ -1,6 +1,6 @@
 {
   "name": "chirpy",
-  "version": "1.27.0",
+  "version": "1.27.1",
   "private": true,
   "description": "Highlight text on any webpage and chat with AI about it",
   "scripts": {

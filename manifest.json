@@ -1,10 +1,15 @@
 {
   "manifest_version": 3,
   "name": "Chirpy",
-  "version": "1.27.0",
-  "version_name": "1.27.0",
+  "version": "1.27.1",
+  "version_name": "1.27.1",
   "description": "Highlight text on any webpage and chat with AI about it",
-  "permissions": ["activeTab", "storage", "contextMenus", "tabs"],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "contextMenus",
+    "tabs"
+  ],
   "host_permissions": [
     "https://api.openai.com/*",
     "https://api.anthropic.com/*",
@@ -15,9 +20,16 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["lib/marked.min.js", "content.js"],
-      "css": ["content.css"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "lib/marked.min.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
       "run_at": "document_idle"
     }
   ],
@@ -36,8 +48,15 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["bubble.css", "lib/marked.min.js", "icons/icon16.png", "icons/icon48.png"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "bubble.css",
+        "lib/marked.min.js",
+        "icons/icon16.png",
+        "icons/icon48.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }
