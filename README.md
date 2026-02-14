@@ -5,18 +5,19 @@ AI highlighting for the web. Select text on any page, click Chirpy, and get an i
 ## Features
 
 - **AI highlighter** - Select text on any page, click the Chirpy bird tooltip to highlight it and chat with AI about it
+- **Page chat** - Double-click the toolbar icon to chat with AI about the entire page
 - **Private by design** - All highlights and chat history are stored locally in your browser. Nothing is sent to a server besides the AI API you choose.
 - **Bring your own key** - Use your existing OpenAI, Anthropic, or Google Gemini account. No Chirpy account needed.
 - **Highlight manager** - View, navigate to, and delete all highlights on the current page
-- **Customize your AI** - Customize how Chirpy responds via the settings panel
+- **Customize your AI** - Choose your model from a dropdown and add custom instructions via the settings panel
 
-### Supported providers & default models
+### Supported providers & models
 
-| Provider | Default Model |
-|----------|---------------|
-| Anthropic | `claude-sonnet-4-5-20250929` |
-| OpenAI | `gpt-4o` |
-| Google Gemini | `gemini-2.0-flash` |
+| Provider | Default | Also available |
+|----------|---------|----------------|
+| Anthropic | Claude Sonnet 4.5 | Haiku 4.5, Opus 4.6 |
+| OpenAI | GPT-4.1 | GPT-4.1 Mini, o4-mini, o3 |
+| Google Gemini | Gemini 2.5 Flash | 2.5 Flash Lite, 2.5 Pro |
 
 ## Setup
 
@@ -34,7 +35,8 @@ You can also configure your provider, API key, model, and custom instructions fr
 3. Chirpy automatically provides a brief explanation of the highlighted text.
 4. Ask follow-up questions in the chat input.
 5. Click an existing highlight to reopen its chat history.
-6. Manage all highlights from the popup's **Annotations** tab.
+6. Double-click the toolbar icon to open a page-wide chat (no highlight needed).
+7. Manage all highlights from the popup's **Highlights** tab.
 
 ## Project Structure
 
@@ -47,6 +49,9 @@ bubble.css           Chat bubble styles (injected into Shadow DOM)
 popup.html           Extension popup markup
 popup.js             Popup logic: settings & annotation manager
 popup.css            Popup styles
+welcome.html         Getting started / onboarding page
+welcome.js           Welcome page logic
+welcome.css          Welcome page styles
 lib/marked.min.js    Markdown rendering library
 icons/               Extension icons (16, 48, 128px)
 scripts/build.sh     Builds dist zip for Chrome Web Store upload
