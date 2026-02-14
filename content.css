@@ -5,39 +5,6 @@ chirpy-hl {
   transition: background-color 0.15s;
 }
 
-/* Tooltip that appears on text selection */
-.chirpy-tooltip {
-  all: initial;
-  position: absolute;
-  z-index: 2147483647;
-  background: #f59e0b;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  user-select: none;
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.12s;
-  box-sizing: border-box;
-}
-
-.chirpy-tooltip:hover {
-  transform: scale(1.1);
-}
-
-.chirpy-tooltip-logo {
-  all: initial;
-  width: 24px;
-  height: 24px;
-  display: block;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
 /* Keep the bubble host out of page layout */
 chirpy-bubble-host {
   display: contents;
