@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome to Chirpy</title>
+  <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+  <!-- Hero -->
+  <section class="hero">
+    <img src="icons/icon128.png" alt="Chirpy" class="hero-icon">
+    <h1 class="hero-title">Chirpy</h1>
+    <p class="hero-tagline">Highlight anything. Chat with AI about it.</p>
+  </section>
+
+  <!-- Step 1: Chat with AI -->
+  <section class="step fade-in">
+    <div class="step-badge">1</div>
+    <div class="step-grid">
+      <div class="step-content">
+        <h2 class="step-title">Chat with AI</h2>
+        <p><strong>Selection chat.</strong> Select text and click <span class="inline-tooltip"><img src="icons/icon48.png" alt="Chirpy" class="inline-icon"></span> to chat about it.</p>
+        <p><strong>Page chat.</strong> Double-click <img src="icons/icon48.png" alt="Chirpy" class="inline-icon"> to chat about the whole page.</p>
+        <p><strong>Leave and come back.</strong> Highlights are saved locally as you browse.</p>
+      </div>
+      <div class="step-mockup">
+        <div class="mockup-page">
+          <div class="mockup-line" style="width:90%"></div>
+          <div class="mockup-line" style="width:80%"></div>
+          <div class="mockup-line">
+            <span class="mockup-line-text" style="width:20%"></span>
+            <span class="mockup-highlight">highlighted text</span>
+            <span class="mockup-line-text" style="width:25%"></span>
+          </div>
+          <div class="mockup-line" style="width:70%"></div>
+          <div class="mockup-tooltip">
+            <img src="icons/icon48.png" alt="" class="mockup-tooltip-icon">
+          </div>
+        </div>
+        <div class="mockup-bubble mockup-bubble-attached">
+          <div class="mockup-bubble-header">
+            <img src="icons/icon48.png" alt="" class="mockup-bubble-icon">
+            <span class="mockup-bubble-brand">Chirpy</span>
+            <span class="mockup-bubble-sep">|</span>
+            <span class="mockup-bubble-title">highlighted text</span>
+            <span class="mockup-bubble-close">&times;</span>
+          </div>
+          <div class="mockup-bubble-messages">
+            <div class="mockup-msg mockup-msg-assistant">This refers to...</div>
+          </div>
+          <div class="mockup-bubble-input">
+            <span class="mockup-input-placeholder">Ask about this text...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 2: API Key Setup -->
+  <section class="step fade-in">
+    <div class="step-badge">2</div>
+    <div class="step-grid">
+      <div class="step-content">
+        <h2 class="step-title">Set up your API key</h2>
+        <p>Chirpy needs an API key to work. Paste yours into the form on the right and you're ready to go.</p>
+        <p>Your key is stored locally and only sent to the provider you choose.</p>
+      </div>
+      <div class="step-mockup">
+        <div class="mockup-form">
+          <label class="mockup-label" for="welcome-provider">AI Provider</label>
+          <select id="welcome-provider" class="mockup-select">
+            <option value="anthropic">Anthropic</option>
+            <option value="google">Google Gemini</option>
+            <option value="openai">OpenAI</option>
+          </select>
+          <label class="mockup-label" for="welcome-apiKey">API Key</label>
+          <input type="password" id="welcome-apiKey" class="mockup-input" placeholder="Paste your API key">
+          <button id="welcome-save" class="mockup-save">Save</button>
+          <div id="welcome-status" class="mockup-status"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 3: Annotations -->
+  <section class="step fade-in">
+    <div class="step-badge">3</div>
+    <div class="step-grid">
+      <div class="step-content">
+        <h2 class="step-title">View saved highlights</h2>
+        <p>Click <img src="icons/icon48.png" alt="Chirpy" class="inline-icon"> to see all your highlights on the current page. They're saved locally and will still be there when you browse away and come back.</p>
+      </div>
+      <div class="step-mockup">
+        <div class="mockup-popup">
+          <div class="mockup-popup-header">
+            <img src="icons/icon48.png" alt="" class="mockup-popup-icon">
+            <span class="mockup-popup-brand">Chirpy</span>
+            <div class="mockup-toggle">
+              <div class="mockup-toggle-track active">
+                <div class="mockup-toggle-thumb"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mockup-popup-tabs">
+            <span class="mockup-tab active">Annotations</span>
+            <span class="mockup-tab">Settings</span>
+          </div>
+          <div class="mockup-annotation-item">
+            <span class="mockup-annotation-dot"></span>
+            <span class="mockup-annotation-text">highlighted text</span>
+            <span class="mockup-annotation-delete">&times;</span>
+          </div>
+          <div class="mockup-annotation-item">
+            <span class="mockup-annotation-dot" style="background:#3b82f6"></span>
+            <span class="mockup-annotation-text">another selection</span>
+            <span class="mockup-annotation-delete">&times;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 4: Settings -->
+  <section class="step fade-in">
+    <div class="step-badge">4</div>
+    <div class="step-grid">
+      <div class="step-content">
+        <h2 class="step-title">Personalize AI responses</h2>
+        <p>Choose your own AI model. Add custom instructions to shape every response.</p>
+        <ul class="step-list">
+          <li>"Always respond in Spanish"</li>
+          <li>"Explain like I'm 5"</li>
+          <li>"Be brief, use bullet points"</li>
+          <li>"I'm a doctor, assume medical knowledge"</li>
+        </ul>
+      </div>
+      <div class="step-mockup">
+        <div class="mockup-popup">
+          <div class="mockup-popup-header">
+            <img src="icons/icon48.png" alt="" class="mockup-popup-icon">
+            <span class="mockup-popup-brand">Chirpy</span>
+            <div class="mockup-toggle">
+              <div class="mockup-toggle-track active">
+                <div class="mockup-toggle-thumb"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mockup-popup-tabs">
+            <span class="mockup-tab">Annotations</span>
+            <span class="mockup-tab active">Settings</span>
+          </div>
+          <div class="mockup-settings-row">
+            <span class="mockup-settings-label">AI Provider</span>
+            <span class="mockup-settings-value">Anthropic</span>
+          </div>
+          <div class="mockup-settings-row">
+            <span class="mockup-settings-label">API Key</span>
+            <span class="mockup-settings-value">sk-ant-...****</span>
+          </div>
+          <div class="mockup-settings-row">
+            <span class="mockup-settings-label">Custom Instructions</span>
+            <span class="mockup-settings-value" style="color:#9ca3af;font-style:italic">e.g. "Always respond in Spanish"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta fade-in">
+    <button id="start-btn" class="cta-button">Start using Chirpy</button>
+  </section>
+
+  <script src="welcome.js"></script>
+</body>
+</html>
