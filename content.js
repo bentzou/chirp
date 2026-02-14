@@ -150,13 +150,38 @@
   // ── Tooltip (appears on text selection) ────────────────────────────
 
   let tooltip = null;
+  let tooltipAction = null;
 
   function removeTooltip() {
     if (tooltip) {
       tooltip.remove();
       tooltip = null;
     }
+    tooltipAction = null;
   }
+
+  /** Check whether a mouse/pointer event lands inside the tooltip */
+  function isTooltipHit(e) {
+    if (!tooltip) return false;
+    const r = tooltip.getBoundingClientRect();
+    return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+  }
+
+  // Capture-phase listeners on document fire before any page handler and
+  // before the event reaches the tooltip element, so they work even when
+  // Reddit (or other SPAs) intercept events or place invisible overlays.
+  document.addEventListener("pointerdown", (e) => {
+    if (!isTooltipHit(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (tooltipAction) { const fn = tooltipAction; tooltipAction = null; fn(); }
+  }, true);
+  document.addEventListener("mousedown", (e) => {
+    if (!isTooltipHit(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    // highlightRange already ran in pointerdown above
+  }, true);
 
   function showTooltip(x, y, selection) {
     removeTooltip();
@@ -179,17 +204,7 @@
     tooltip.appendChild(logo);
 
     if (selText && range) {
-      let fired = false;
-      tooltip.addEventListener("pointerdown", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!fired) { fired = true; try { highlightRange(range, selText); } catch (_) {} }
-      });
-      // Stop mousedown from bubbling to document handler, but don't re-run highlightRange
-      tooltip.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      });
+      tooltipAction = () => highlightRange(range, selText);
     }
 
     tooltip.style.left = x + "px";
