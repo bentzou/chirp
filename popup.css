@@ -181,11 +181,10 @@ button#save:hover {
 }
 
 .status {
-  margin-top: 8px;
+  margin-top: 4px;
   font-size: 12px;
   color: #16a34a;
   text-align: center;
-  min-height: 16px;
 }
 
 /* ── Annotations panel ───────────────────────────────────────── */
@@ -296,9 +295,9 @@ button#save:hover {
 
 .about-footer {
   text-align: center;
-  padding: 12px 0 4px;
+  padding: 8px 0 0;
   border-top: 1px solid #f3f4f6;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .about-version,
