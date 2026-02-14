@@ -14,6 +14,7 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 14px;
   color: #1a1a1a;
+  color-scheme: light;
   z-index: 2147483647;
   overflow: hidden;
   resize: both;
