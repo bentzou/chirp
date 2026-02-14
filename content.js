@@ -46,20 +46,26 @@
     return "chirpy-" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
   }
 
-  /** Build an XPath for a text node */
+  /** Build an XPath for a text node (returns null if the node is unreachable from document.body, e.g. inside Shadow DOM) */
   function getXPath(node) {
     if (node.nodeType === Node.TEXT_NODE) {
       const parent = node.parentNode;
+      if (!parent) return null;
+      const parentPath = getXPath(parent);
+      if (!parentPath) return null;
       const siblings = Array.from(parent.childNodes).filter((n) => n.nodeType === Node.TEXT_NODE);
       const idx = siblings.indexOf(node) + 1;
-      return getXPath(parent) + "/text()[" + idx + "]";
+      return parentPath + "/text()[" + idx + "]";
     }
     if (node === document.body) return "/html/body";
     const parent = node.parentNode;
+    if (!parent || parent instanceof ShadowRoot) return null;
+    const parentPath = getXPath(parent);
+    if (!parentPath) return null;
     const siblings = Array.from(parent.children).filter((n) => n.tagName === node.tagName);
     const idx = siblings.indexOf(node) + 1;
     const tag = node.tagName.toLowerCase();
-    return getXPath(parent) + "/" + tag + "[" + idx + "]";
+    return parentPath + "/" + tag + "[" + idx + "]";
   }
 
   /** Resolve an XPath back to a node */
@@ -250,14 +256,16 @@
 
     // Serialize range before modifying DOM
     const ctx = getRangeContext(range);
+    const startXPath = getXPath(range.startContainer);
+    const endXPath = getXPath(range.endContainer);
     const serialized = {
       id,
       text: selText,
       prefix: ctx.prefix,
       suffix: ctx.suffix,
-      startXPath: getXPath(range.startContainer),
+      startXPath,
       startOffset: range.startOffset,
-      endXPath: getXPath(range.endContainer),
+      endXPath,
       endOffset: range.endOffset,
       messages: [],
     };
@@ -265,8 +273,21 @@
     wrapRangeInHighlight(range, id);
     window.getSelection().removeAllRanges();
 
-    // Persist, then open bubble with auto-context
     if (!contextValid()) return;
+
+    // If XPath serialization failed (e.g. node inside Shadow DOM), we can
+    // still highlight and open the bubble — just skip persistence so the
+    // highlight won't survive a page reload.
+    if (!startXPath || !endXPath) {
+      openBubble(id, selText, []);
+      const messagesArea = bubbleShadow?.querySelector(".chirpy-messages");
+      if (messagesArea) {
+        sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
+      }
+      return;
+    }
+
+    // Persist, then open bubble with auto-context
     chrome.runtime.sendMessage(
       {
         type: "saveHighlight",
