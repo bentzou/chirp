@@ -16,8 +16,9 @@
     </div>
 
     <div class="tab-bar">
-      <button class="tab-btn active" data-tab="annotations">Annotations</button>
+      <button class="tab-btn active" data-tab="annotations">Highlights</button>
       <button class="tab-btn" data-tab="settings">Settings</button>
+      <button class="tab-btn" data-tab="about">🧡</button>
     </div>
 
     <div class="tab-panel active" id="panel-annotations">
@@ -43,6 +44,16 @@
 
       <button id="save">Save</button>
       <div id="status" class="status"></div>
+    </div>
+
+    <div class="tab-panel about-panel" id="panel-about">
+      <a href="#" id="open-welcome" class="about-link">Getting Started Guide</a>
+      <a href="mailto:bentzou@gmail.com?subject=Chirpy%20Feedback" class="about-link">Send Feedback</a>
+      <a href="https://venmo.com/bentzou" target="_blank" class="about-link">Buy me a coffee ☕</a>
+      <div class="about-footer">
+        <div id="about-version" class="about-version"></div>
+        <div class="about-copyright">© 2025 Chirpy</div>
+      </div>
     </div>
   </div>
   <script src="popup.js"></script>

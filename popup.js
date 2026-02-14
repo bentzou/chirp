@@ -152,5 +152,15 @@ function loadAnnotations() {
   });
 }
 
+// ── About panel ──────────────────────────────────────────────────
+
+document.getElementById("about-version").textContent =
+  "v" + chrome.runtime.getManifest().version;
+
+document.getElementById("open-welcome").addEventListener("click", (e) => {
+  e.preventDefault();
+  chrome.tabs.create({ url: "welcome.html" });
+});
+
 // Load annotations on popup open
 loadAnnotations();
