@@ -1,0 +1,524 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+  line-height: 1.6;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────── */
+
+.hero {
+  text-align: center;
+  padding: 60px 24px 32px;
+}
+
+.hero-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+}
+
+.hero-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #f59e0b;
+  margin-top: 16px;
+}
+
+.hero-tagline {
+  font-size: 20px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+/* ── Steps ─────────────────────────────────────────────────────── */
+
+.step {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 24px;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.step-badge {
+  width: 36px;
+  height: 36px;
+  background: #f59e0b;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.step-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.step-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.step-content p {
+  color: #374151;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.step-content p:last-child {
+  margin-bottom: 0;
+}
+
+.inline-tooltip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #f59e0b;
+  border-radius: 50%;
+  vertical-align: text-bottom;
+}
+
+.inline-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.step-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.step-list li {
+  margin-bottom: 4px;
+  font-style: italic;
+}
+
+/* ── Fade-in animation ─────────────────────────────────────────── */
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Mockup: Page with highlights ──────────────────────────────── */
+
+.mockup-page {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  width: 85%;
+}
+
+.mockup-line {
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.mockup-line-text {
+  display: inline-block;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+
+.mockup-highlight {
+  display: inline-block;
+  background: rgba(245, 158, 11, 0.35);
+  border-bottom: 2px solid rgba(245, 158, 11, 0.6);
+  padding: 2px 4px;
+  font-size: 12px;
+  color: #1a1a1a;
+  border-radius: 2px;
+  line-height: 1;
+}
+
+.mockup-tooltip {
+  position: absolute;
+  top: 22px;
+  left: 115px;
+  width: 32px;
+  height: 32px;
+  background: #f59e0b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mockup-tooltip-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.mockup-bubble-attached {
+  position: relative;
+  margin-top: -24px;
+  margin-left: auto;
+  width: 85%;
+}
+
+/* ── Mockup: API key form (working) ────────────────────────────── */
+
+.mockup-form {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.mockup-label {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+  margin-top: 12px;
+}
+
+.mockup-label:first-child {
+  margin-top: 0;
+}
+
+.mockup-select,
+.mockup-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  font-family: inherit;
+}
+
+.mockup-select:focus,
+.mockup-input:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.mockup-save {
+  margin-top: 14px;
+  width: 100%;
+  padding: 8px;
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mockup-save:hover {
+  background: #d97706;
+}
+
+.mockup-status {
+  margin-top: 8px;
+  font-size: 12px;
+  text-align: center;
+  min-height: 16px;
+}
+
+/* ── Mockup: Chat bubble ───────────────────────────────────────── */
+
+.mockup-bubble {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.mockup-bubble-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #f59e0b;
+  color: #fff;
+}
+
+.mockup-bubble-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.mockup-bubble-brand {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.mockup-bubble-sep {
+  opacity: 0.5;
+  font-size: 13px;
+}
+
+.mockup-bubble-title {
+  font-size: 12px;
+  opacity: 0.9;
+  flex: 1;
+}
+
+.mockup-bubble-close {
+  font-size: 16px;
+  opacity: 0.7;
+  cursor: default;
+}
+
+.mockup-bubble-messages {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mockup-msg {
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  max-width: 85%;
+  line-height: 1.4;
+}
+
+.mockup-msg-user {
+  background: #f59e0b;
+  color: #fff;
+  align-self: flex-end;
+}
+
+.mockup-msg-assistant {
+  background: #f3f4f6;
+  color: #374151;
+  align-self: flex-start;
+}
+
+.mockup-bubble-input {
+  padding: 8px 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.mockup-input-placeholder {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* ── Mockup: Popup ─────────────────────────────────────────────── */
+
+.mockup-popup {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.mockup-popup-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+}
+
+.mockup-popup-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.mockup-popup-brand {
+  font-weight: 700;
+  font-size: 15px;
+  color: #f59e0b;
+}
+
+.mockup-toggle {
+  margin-left: auto;
+}
+
+.mockup-toggle-track {
+  width: 32px;
+  height: 18px;
+  background: #d1d5db;
+  border-radius: 9px;
+  position: relative;
+}
+
+.mockup-toggle-track.active {
+  background: #f59e0b;
+}
+
+.mockup-toggle-thumb {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+
+.mockup-toggle-track.active .mockup-toggle-thumb {
+  transform: translateX(14px);
+}
+
+.mockup-popup-tabs {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 0 14px;
+}
+
+.mockup-tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.mockup-tab.active {
+  color: #f59e0b;
+  border-bottom-color: #f59e0b;
+}
+
+/* Annotation items */
+
+.mockup-annotation-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+}
+
+.mockup-annotation-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f59e0b;
+  flex-shrink: 0;
+}
+
+.mockup-annotation-text {
+  flex: 1;
+  font-size: 12px;
+  color: #374151;
+}
+
+.mockup-annotation-delete {
+  color: #9ca3af;
+  font-size: 14px;
+  cursor: default;
+}
+
+/* Settings rows */
+
+.mockup-settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.mockup-settings-row:last-child {
+  border-bottom: none;
+}
+
+.mockup-settings-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.mockup-settings-value {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ── CTA ───────────────────────────────────────────────────────── */
+
+.cta {
+  text-align: center;
+  padding: 24px 24px 60px;
+}
+
+.cta-button {
+  padding: 14px 40px;
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cta-button:hover {
+  background: #d97706;
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 48px 20px 32px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-tagline {
+    font-size: 17px;
+  }
+
+  .step {
+    padding: 32px 20px;
+  }
+
+  .step-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
