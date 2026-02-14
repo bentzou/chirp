@@ -2,6 +2,7 @@ const DEFAULTS = {
   openai: "gpt-4.1",
   anthropic: "claude-sonnet-4-5-20250929",
   google: "gemini-2.5-flash",
+  openrouter: "anthropic/claude-sonnet-4.5",
 };
 
 const MODELS = {
@@ -20,6 +21,13 @@ const MODELS = {
     { value: "gpt-4.1-mini", label: "GPT-4.1 Mini" },
     { value: "o4-mini", label: "o4-mini" },
     { value: "o3", label: "o3" },
+  ],
+  openrouter: [
+    { value: "anthropic/claude-sonnet-4.5", label: "Claude Sonnet 4.5" },
+    { value: "openai/gpt-4.1", label: "GPT-4.1" },
+    { value: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+    { value: "meta-llama/llama-4-maverick", label: "Llama 4 Maverick" },
+    { value: "deepseek/deepseek-r1", label: "DeepSeek R1" },
   ],
 };
 

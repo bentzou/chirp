@@ -612,7 +612,7 @@
 
     const providerSelect = document.createElement("select");
     providerSelect.className = "chirpy-setup-select";
-    for (const [value, name] of [["anthropic", "Anthropic"], ["google", "Google Gemini"], ["openai", "OpenAI"]]) {
+    for (const [value, name] of [["anthropic", "Anthropic"], ["google", "Google Gemini"], ["openai", "OpenAI"], ["openrouter", "OpenRouter"]]) {
       const opt = document.createElement("option");
       opt.value = value;
       opt.textContent = name;

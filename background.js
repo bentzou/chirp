@@ -2,6 +2,7 @@ const DEFAULTS = {
   openai: "gpt-4.1",
   anthropic: "claude-sonnet-4-5-20250929",
   google: "gemini-2.5-flash",
+  openrouter: "anthropic/claude-sonnet-4.5",
 };
 
 chrome.runtime.onInstalled.addListener((details) => {
@@ -107,12 +108,33 @@ function buildGoogleRequest(settings, systemPrompt, messages) {
   };
 }
 
+function buildOpenRouterRequest(settings, systemPrompt, messages) {
+  return {
+    url: "https://openrouter.ai/api/v1/chat/completions",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${settings.apiKey}`,
+      "HTTP-Referer": "https://chirpy.app",
+    },
+    body: {
+      model: settings.model,
+      stream: true,
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...messages,
+      ],
+    },
+  };
+}
+
 function buildRequest(settings, systemPrompt, messages) {
   switch (settings.provider) {
     case "anthropic":
       return buildAnthropicRequest(settings, systemPrompt, messages);
     case "google":
       return buildGoogleRequest(settings, systemPrompt, messages);
+    case "openrouter":
+      return buildOpenRouterRequest(settings, systemPrompt, messages);
     default:
       return buildOpenAIRequest(settings, systemPrompt, messages);
   }
@@ -121,7 +143,8 @@ function buildRequest(settings, systemPrompt, messages) {
 // Extract text delta from a SSE chunk per provider
 function extractDelta(provider, parsed) {
   switch (provider) {
-    case "openai": {
+    case "openai":
+    case "openrouter": {
       const delta = parsed.choices?.[0]?.delta?.content;
       return delta || "";
     }
