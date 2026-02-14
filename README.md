@@ -54,6 +54,25 @@ scripts/release.sh   Bumps version, syncs manifest, builds dist zip
 scripts/sync-version.sh  Syncs manifest.json version from package.json
 ```
 
+## v2 Roadmap
+
+### UX & Delight
+- **Multi-color highlights** — Choose from 6 colors (amber, blue, green, pink, purple, red) via a color strip in the tooltip
+- **Keyboard shortcuts** — `Alt+Shift+H` to highlight selection, `Escape` to close chat, `Alt+Shift+S` to toggle Chirpy on/off
+- **Export & import** — Export all highlights as JSON (per page or all pages), import to merge by highlight ID
+- **Highlight notes** — Add personal notes to any highlight, separate from AI chat
+
+### Technical Foundation
+- **Error handling & logging** — Contextual error logging with a rotating 100-entry log buffer, viewable in popup Settings
+- **Streaming performance & abort** — AbortController on fetch, throttled markdown re-renders, explicit port cleanup
+- **Robust highlight restoration** — MutationObserver-based retry for unresolved highlights, SPA navigation detection
+- **Security hardening** — DOMParser-based HTML sanitizer with tag/attribute allowlists, rate limiting (10 req/min)
+
+### Power Features
+- **Cross-highlight synthesis** — "Synthesize" button sends all page highlights to AI for themes, connections, and contradictions
+- **Global highlight library** — Search across all highlights on all pages from a new Library tab in the popup
+- **Smart context actions** — Right-click a highlight for pre-built AI actions: Summarize, Simplify, Define Key Terms, Translate, Copy as Markdown
+
 ## Building
 
 ```sh
