@@ -30,10 +30,12 @@ chirpy-hl {
 }
 
 .chirpy-tooltip-logo {
+  all: initial;
   width: 24px;
   height: 24px;
   display: block;
   border-radius: 50%;
+  pointer-events: none;
 }
 
 /* Keep the bubble host out of page layout */

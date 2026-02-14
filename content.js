@@ -179,11 +179,13 @@
     tooltip.appendChild(logo);
 
     if (selText && range) {
-      tooltip.addEventListener("mousedown", (e) => {
+      const handler = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        highlightRange(range, selText);
-      });
+        try { highlightRange(range, selText); } catch (_) {}
+      };
+      tooltip.addEventListener("pointerdown", handler);
+      tooltip.addEventListener("mousedown", handler);
     }
 
     tooltip.style.left = x + "px";
