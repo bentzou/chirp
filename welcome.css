@@ -18,17 +18,29 @@ body {
   padding: 60px 24px 32px;
 }
 
+.hero-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
 .hero-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
 }
 
 .hero-title {
   font-size: 42px;
   font-weight: 800;
   color: #f59e0b;
-  margin-top: 16px;
+}
+
+.hero-version {
+  font-size: 14px;
+  font-weight: 500;
+  color: #d97706;
 }
 
 .hero-tagline {
@@ -496,6 +508,18 @@ body {
 
 .cta-button:hover {
   background: #d97706;
+}
+
+/* ── Footer ────────────────────────────────────────────────────── */
+
+.welcome-footer {
+  text-align: center;
+  padding: 0 24px 32px;
+  font-size: 11px;
+  color: #9ca3af;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 
 /* ── Responsive ────────────────────────────────────────────────── */

@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Welcome to Chirpy</title>
   <link rel="stylesheet" href="welcome.css">
+  <link rel="stylesheet" href="content.css">
 </head>
 <body>
   <!-- Hero -->
   <section class="hero">
-    <img src="icons/icon128.png" alt="Chirpy" class="hero-icon">
-    <h1 class="hero-title">Chirpy</h1>
+    <div class="hero-brand">
+      <img src="icons/icon128.png" alt="Chirpy" class="hero-icon">
+      <h1 class="hero-title">Chirpy <span id="hero-version" class="hero-version"></span></h1>
+    </div>
     <p class="hero-tagline">Highlight anything. Chat with AI about it.</p>
   </section>
 
@@ -83,7 +86,7 @@
     </div>
   </section>
 
-  <!-- Step 3: Annotations -->
+  <!-- Step 3: Highlights -->
   <section class="step fade-in">
     <div class="step-badge">3</div>
     <div class="step-grid">
@@ -103,7 +106,7 @@
             </div>
           </div>
           <div class="mockup-popup-tabs">
-            <span class="mockup-tab active">Annotations</span>
+            <span class="mockup-tab active">Highlights</span>
             <span class="mockup-tab">Settings</span>
           </div>
           <div class="mockup-annotation-item">
@@ -147,7 +150,7 @@
             </div>
           </div>
           <div class="mockup-popup-tabs">
-            <span class="mockup-tab">Annotations</span>
+            <span class="mockup-tab">Highlights</span>
             <span class="mockup-tab active">Settings</span>
           </div>
           <div class="mockup-settings-row">
@@ -172,6 +175,13 @@
     <button id="start-btn" class="cta-button">Start using Chirpy</button>
   </section>
 
+  <footer class="welcome-footer">
+    <span id="welcome-version"></span>
+    <span>© 2025 Chirpy</span>
+  </footer>
+
+  <script src="lib/marked.min.js"></script>
+  <script src="content.js"></script>
   <script src="welcome.js"></script>
 </body>
 </html>

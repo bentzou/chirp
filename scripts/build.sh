@@ -19,6 +19,11 @@ zip -r "$OUTDIR/$ZIPNAME" \
   content.css \
   popup.css \
   bubble.css \
+  tooltip.html \
+  tooltip.js \
+  welcome.html \
+  welcome.css \
+  welcome.js \
   icons/ \
   lib/
 
