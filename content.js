@@ -179,13 +179,17 @@
     tooltip.appendChild(logo);
 
     if (selText && range) {
-      const handler = (e) => {
+      let fired = false;
+      tooltip.addEventListener("pointerdown", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        try { highlightRange(range, selText); } catch (_) {}
-      };
-      tooltip.addEventListener("pointerdown", handler);
-      tooltip.addEventListener("mousedown", handler);
+        if (!fired) { fired = true; try { highlightRange(range, selText); } catch (_) {} }
+      });
+      // Stop mousedown from bubbling to document handler, but don't re-run highlightRange
+      tooltip.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
     }
 
     tooltip.style.left = x + "px";
