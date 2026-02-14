@@ -155,14 +155,28 @@
 
   // ── Tooltip (appears on text selection) ────────────────────────────
 
-  let tooltipHost = null;
+  let tooltip = null;
+  let tooltipAction = null;
 
   function removeTooltip() {
-    if (tooltipHost) {
-      tooltipHost.remove();
-      tooltipHost = null;
+    if (tooltip) {
+      tooltip.remove();
+      tooltip = null;
     }
+    tooltipAction = null;
   }
+
+  // The tooltip is rendered as an <iframe> pointing to an extension page.
+  // Iframes have their own browsing context: events inside are completely
+  // separate from the parent page, so no site script (Reddit, etc.) can
+  // intercept clicks.  The iframe communicates back via postMessage.
+  window.addEventListener("message", (e) => {
+    if (e.data?.type !== "chirpy-tooltip-click" || !tooltipAction) return;
+    const fn = tooltipAction;
+    tooltipAction = null;
+    removeTooltip();
+    try { fn(); } catch (err) { console.error("[Chirpy] highlightRange failed:", err); }
+  });
 
   function showTooltip(x, y, selection) {
     removeTooltip();
@@ -175,36 +189,18 @@
       try { range = selection.getRangeAt(0).cloneRange(); } catch (_) {}
     }
 
-    // Shadow DOM host — provides complete CSS + event isolation from the page
-    tooltipHost = document.createElement("chirpy-tooltip-host");
-    tooltipHost.style.cssText = "position:absolute;z-index:2147483647;left:" + x + "px;top:" + y + "px;";
-    const shadow = tooltipHost.attachShadow({ mode: "closed" });
-
-    const style = document.createElement("style");
-    style.textContent =
-      ".t{width:36px;height:36px;background:#f59e0b;border-radius:50%;cursor:pointer;" +
-      "box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;" +
-      "transition:transform .12s;box-sizing:border-box;user-select:none}" +
-      ".t:hover{transform:scale(1.1)}" +
-      "img{width:24px;height:24px;display:block;border-radius:50%;pointer-events:none}";
-    shadow.appendChild(style);
-
-    const btn = document.createElement("div");
-    btn.className = "t";
-    const logo = document.createElement("img");
-    logo.src = chrome.runtime.getURL("icons/icon48.png");
-    logo.alt = "Chirpy";
-    btn.appendChild(logo);
+    tooltip = document.createElement("iframe");
+    tooltip.src = chrome.runtime.getURL("tooltip.html");
+    tooltip.style.cssText = "all:initial;position:absolute;z-index:2147483647;border:none;" +
+      "width:36px;height:36px;background:#f59e0b;border-radius:50%;overflow:hidden;" +
+      "pointer-events:auto;left:" + x + "px;top:" + y + "px;";
+    tooltip.setAttribute("allowtransparency", "true");
 
     if (selText && range) {
-      btn.addEventListener("mousedown", (e) => { e.preventDefault(); e.stopPropagation(); });
-      btn.addEventListener("click", () => {
-        try { highlightRange(range, selText); } catch (err) { console.error("[Chirpy]", err); }
-      });
+      tooltipAction = () => highlightRange(range, selText);
     }
 
-    shadow.appendChild(btn);
-    document.body.appendChild(tooltipHost);
+    document.body.appendChild(tooltip);
   }
 
   document.addEventListener("mouseup", (e) => {
@@ -213,7 +209,7 @@
     setTimeout(() => {
       const sel = window.getSelection();
       if (!sel || sel.isCollapsed || !sel.toString().trim()) {
-        if (!currentHighlightId && !e.target.closest?.("chirpy-hl") && !e.target.closest?.("chirpy-tooltip-host")) removeTooltip();
+        if (!currentHighlightId && !e.target.closest?.("chirpy-hl") && !(tooltip && tooltip === e.target)) removeTooltip();
         return;
       }
 
@@ -228,7 +224,7 @@
 
   document.addEventListener("mousedown", (e) => {
     if (e.detail >= 2) return; // Don't remove on multi-click (prevents tooltip blink on triple-click)
-    if (tooltipHost && !e.target.closest?.("chirpy-tooltip-host") && !currentHighlightId && !e.target.closest?.("chirpy-hl")) {
+    if (tooltip && e.target !== tooltip && !currentHighlightId && !e.target.closest?.("chirpy-hl")) {
       removeTooltip();
     }
   });
@@ -746,7 +742,7 @@
     const path = e.composedPath();
     // Check if click is inside bubble, tooltip, or a highlight
     const insideBubble = path.some((el) => el === bubbleHost);
-    const insideTooltip = tooltipHost && path.some((el) => el === tooltipHost);
+    const insideTooltip = tooltip && path.some((el) => el === tooltip);
     const insideHighlight = e.target.closest?.("chirpy-hl");
     if (!insideBubble && !insideTooltip && !insideHighlight) {
       closeBubble();

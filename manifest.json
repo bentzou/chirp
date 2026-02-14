@@ -48,6 +48,7 @@
     {
       "resources": [
         "bubble.css",
+        "tooltip.html",
         "lib/marked.min.js",
         "icons/icon16.png",
         "icons/icon48.png"

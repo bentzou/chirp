@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html><head><style>
+*{margin:0;padding:0}
+html,body{background:transparent;overflow:hidden}
+button{width:36px;height:36px;background:#f59e0b;border:none;border-radius:50%;
+cursor:pointer;display:flex;align-items:center;justify-content:center;
+box-shadow:0 2px 8px rgba(0,0,0,.15);transition:transform .12s}
+button:hover{transform:scale(1.1)}
+img{width:24px;height:24px;border-radius:50%}
+</style></head><body>
+<button id="b"><img src="icons/icon48.png" alt="Chirpy"></button>
+<script>
+document.getElementById("b").addEventListener("click",()=>{
+  window.parent.postMessage({type:"chirpy-tooltip-click"},"*");
+});
+</script>
+</body></html>
