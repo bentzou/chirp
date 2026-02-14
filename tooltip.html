@@ -9,9 +9,5 @@ button:hover{transform:scale(1.1)}
 img{width:24px;height:24px;border-radius:50%}
 </style></head><body>
 <button id="b"><img src="icons/icon48.png" alt="Chirpy"></button>
-<script>
-document.getElementById("b").addEventListener("click",()=>{
-  window.parent.postMessage({type:"chirpy-tooltip-click"},"*");
-});
-</script>
+<script src="tooltip.js"></script>
 </body></html>
