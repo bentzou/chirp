@@ -260,34 +260,21 @@
 
     if (!contextValid()) return;
 
-    // If XPath serialization failed (e.g. node inside Shadow DOM), we can
-    // still highlight and open the bubble — just skip persistence so the
-    // highlight won't survive a page reload.
-    if (!startXPath || !endXPath) {
-      openBubble(id, selText, []);
-      const messagesArea = bubbleShadow?.querySelector(".chirpy-messages");
-      if (messagesArea) {
-        sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
-      }
-      return;
+    // Open bubble immediately — don't block on the storage round-trip
+    openBubble(id, selText, []);
+    const messagesArea = bubbleShadow?.querySelector(".chirpy-messages");
+    if (messagesArea) {
+      sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
     }
 
-    // Persist, then open bubble with auto-context
-    chrome.runtime.sendMessage(
-      {
+    // Persist to storage in the background (non-blocking)
+    if (startXPath && endXPath) {
+      chrome.runtime.sendMessage({
         type: "saveHighlight",
         url: location.href,
         highlight: serialized,
-      },
-      () => {
-        openBubble(id, selText, []);
-        // Auto-ask for context
-        const messagesArea = bubbleShadow?.querySelector(".chirpy-messages");
-        if (messagesArea) {
-          sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
-        }
-      }
-    );
+      });
+    }
   }
 
   /** Wraps the given range's text nodes in <chirpy-hl> custom elements */
@@ -411,6 +398,7 @@
   function ensureBubbleHost() {
     if (bubbleHost) return;
     bubbleHost = document.createElement("chirpy-bubble-host");
+    bubbleHost.style.cssText = "display:contents;pointer-events:auto;visibility:visible;opacity:1;";
     bubbleShadow = bubbleHost.attachShadow({ mode: "open" });
 
     // Load bubble styles into shadow DOM
