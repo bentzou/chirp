@@ -10,6 +10,9 @@
 
   // ── Enabled state ────────────────────────────────────────────────
 
+  const PAGE_CHAT_ID = "chirpy-page-chat";
+  let pageChatMessages = [];
+
   let chirpyEnabled = true;
 
   chrome.storage.sync.get({ enabled: true }, (data) => {
@@ -561,6 +564,27 @@
     removeTooltip();
   }
 
+  function openPageChat() {
+    if (!chirpyEnabled) return;
+    // If page chat already open, un-minimize and focus input
+    if (currentHighlightId === PAGE_CHAT_ID && bubbleShadow) {
+      const bubble = bubbleShadow.querySelector(".chirpy-bubble");
+      if (bubble) {
+        bubble.classList.remove("chirpy-minimized");
+        const input = bubbleShadow.querySelector(".chirpy-input");
+        if (input) input.focus();
+        return;
+      }
+    }
+    closeBubble();
+    openBubble(PAGE_CHAT_ID, "Page Chat", pageChatMessages);
+    // Set placeholder for page chat
+    if (bubbleShadow) {
+      const input = bubbleShadow.querySelector(".chirpy-input");
+      if (input) input.placeholder = "Ask about this page...";
+    }
+  }
+
   function appendMessage(container, role, content) {
     const div = document.createElement("div");
     div.className = "chirpy-msg chirpy-msg-" + role;
@@ -637,11 +661,9 @@
 
   function sendMessage(highlightId, selText, userText, messagesArea, { hidden = false } = {}) {
     if (!contextValid()) return;
-    // Get current stored messages for this highlight
-    chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
-      const hl = highlights?.find((h) => h.id === highlightId);
-      const chatMessages = hl?.messages || [];
+    const isPageChat = highlightId === PAGE_CHAT_ID;
 
+    function doSend(chatMessages, hl) {
       chatMessages.push({ role: "user", content: userText, hidden: hidden || undefined });
       if (!hidden) appendMessage(messagesArea, "user", userText);
 
@@ -654,6 +676,7 @@
 
       port.postMessage({
         type: "chat",
+        mode: isPageChat ? "page-chat" : "highlight",
         selection: selText,
         pageContext: getPageContext(),
         messages: chatMessages.map(({ role, content }) => ({ role, content })),
@@ -665,17 +688,15 @@
         if (msg.type === "delta") {
           assistantDiv.classList.remove("chirpy-msg-loading");
           assistantText += msg.text;
-          // Re-render markdown on each delta
           assistantDiv.innerHTML = renderMarkdown(assistantText);
           messagesArea.scrollTop = messagesArea.scrollHeight;
         } else if (msg.type === "done") {
           if (assistantText) {
             chatMessages.push({ role: "assistant", content: assistantText });
-            // Final render
             assistantDiv.innerHTML = renderMarkdown(assistantText);
           }
-          // Persist updated messages
-          if (hl) {
+          // Persist updated messages (highlight chat only)
+          if (!isPageChat && hl) {
             hl.messages = chatMessages;
             chrome.runtime.sendMessage({
               type: "updateHighlight",
@@ -695,7 +716,17 @@
           port.disconnect();
         }
       });
-    });
+    }
+
+    if (isPageChat) {
+      doSend(pageChatMessages, null);
+    } else {
+      // Get current stored messages for this highlight
+      chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
+        const hl = highlights?.find((h) => h.id === highlightId);
+        doSend(hl?.messages || [], hl);
+      });
+    }
   }
 
   // ── Click on highlight to re-open bubble ──────────────────────────
@@ -761,6 +792,12 @@
           if (hl) openBubble(msg.id, hl.text, hl.messages || []);
         });
       }
+      sendResponse({ ok: true });
+      return;
+    }
+
+    if (msg.type === "openPageChat") {
+      openPageChat();
       sendResponse({ ok: true });
       return;
     }

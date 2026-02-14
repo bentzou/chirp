@@ -4,6 +4,12 @@ const DEFAULTS = {
   google: "gemini-2.0-flash",
 };
 
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: "welcome.html" });
+  }
+});
+
 async function getSettings() {
   return new Promise((resolve) => {
     chrome.storage.sync.get(["provider", "apiKey", "model", "customInstructions"], (data) => {
@@ -147,27 +153,48 @@ chrome.runtime.onConnect.addListener((port) => {
       return;
     }
 
-    const systemPrompt = [
-      "You are Chirpy, a helpful assistant embedded in the user's browser.",
-      "The user has highlighted a specific term or passage on a webpage.",
-      "",
-      "=== Highlighted Text ===",
-      msg.selection,
-      "========================",
-      "",
-      msg.pageContext
-        ? "=== Page Content (truncated) ===\n" + msg.pageContext + "\n================================"
-        : "",
-      "",
-      "Your primary job is to explain the highlighted term or concept — what it means, why it's significant, or how it works.",
-      "Your secondary job is to relate it to the surrounding page content when doing so adds useful context.",
-      "",
-      "Keep initial explanations to 1-2 sentences. Expand only when the user asks follow-up questions.",
-      "Be short and concise. Respond sparingly — if a message doesn't need a reply, don't force one.",
-      "Never restate what the highlighted text says or describe which website the user is on — they already know. Jump straight to insight, explanation, or answering the question.",
-      "Never end with follow-up questions like \"Would you like to know more?\" — just answer and stop.",
-      "Use markdown formatting when it improves clarity.",
-    ].join("\n");
+    let systemPrompt;
+
+    if (msg.mode === "page-chat") {
+      systemPrompt = [
+        "You are Chirpy, a helpful assistant embedded in the user's browser.",
+        "The user is chatting about the webpage they are currently viewing.",
+        "",
+        msg.pageContext
+          ? "=== Page Content (truncated) ===\n" + msg.pageContext + "\n================================"
+          : "",
+        "",
+        "Your primary job is to answer questions about the page content.",
+        "",
+        "Keep answers concise. Expand only when the user asks follow-up questions.",
+        "Be short and concise. Respond sparingly — if a message doesn't need a reply, don't force one.",
+        "Never describe which website the user is on — they already know. Jump straight to insight, explanation, or answering the question.",
+        "Never end with follow-up questions like \"Would you like to know more?\" — just answer and stop.",
+        "Use markdown formatting when it improves clarity.",
+      ].join("\n");
+    } else {
+      systemPrompt = [
+        "You are Chirpy, a helpful assistant embedded in the user's browser.",
+        "The user has highlighted a specific term or passage on a webpage.",
+        "",
+        "=== Highlighted Text ===",
+        msg.selection,
+        "========================",
+        "",
+        msg.pageContext
+          ? "=== Page Content (truncated) ===\n" + msg.pageContext + "\n================================"
+          : "",
+        "",
+        "Your primary job is to explain the highlighted term or concept — what it means, why it's significant, or how it works.",
+        "Your secondary job is to relate it to the surrounding page content when doing so adds useful context.",
+        "",
+        "Keep initial explanations to 1-2 sentences. Expand only when the user asks follow-up questions.",
+        "Be short and concise. Respond sparingly — if a message doesn't need a reply, don't force one.",
+        "Never restate what the highlighted text says or describe which website the user is on — they already know. Jump straight to insight, explanation, or answering the question.",
+        "Never end with follow-up questions like \"Would you like to know more?\" — just answer and stop.",
+        "Use markdown formatting when it improves clarity.",
+      ].join("\n");
+    }
 
     if (settings.customInstructions) {
       systemPrompt += "\n\nUser's custom instructions:\n" + settings.customInstructions;
@@ -258,5 +285,29 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       saveHighlights(msg.url, filtered).then(() => sendResponse({ ok: true }));
     });
     return true;
+  }
+});
+
+// ── Toolbar button: single-click → popup, double-click → page chat ──
+
+let clickTimer = null;
+
+chrome.action.onClicked.addListener((tab) => {
+  if (clickTimer) {
+    // Second click within window → double-click
+    clearTimeout(clickTimer);
+    clickTimer = null;
+    chrome.tabs.sendMessage(tab.id, { type: "openPageChat" }).catch(() => {
+      // Content script not available (e.g. chrome:// pages) — silently ignore
+    });
+  } else {
+    // First click → start timer
+    clickTimer = setTimeout(async () => {
+      clickTimer = null;
+      await chrome.action.setPopup({ popup: "popup.html" });
+      chrome.action.openPopup();
+      // Clear popup after it opens so onClicked keeps firing
+      setTimeout(() => chrome.action.setPopup({ popup: "" }), 500);
+    }, 300);
   }
 });
