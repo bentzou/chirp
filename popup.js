@@ -1,7 +1,26 @@
 const DEFAULTS = {
-  openai: "gpt-4o",
+  openai: "gpt-4.1",
   anthropic: "claude-sonnet-4-5-20250929",
-  google: "gemini-2.0-flash",
+  google: "gemini-2.5-flash",
+};
+
+const MODELS = {
+  anthropic: [
+    { value: "claude-sonnet-4-5-20250929", label: "Claude Sonnet 4.5" },
+    { value: "claude-haiku-4-5-20251001", label: "Claude Haiku 4.5" },
+    { value: "claude-opus-4-6", label: "Claude Opus 4.6" },
+  ],
+  google: [
+    { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+    { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite" },
+    { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro" },
+  ],
+  openai: [
+    { value: "gpt-4.1", label: "GPT-4.1" },
+    { value: "gpt-4.1-mini", label: "GPT-4.1 Mini" },
+    { value: "o4-mini", label: "o4-mini" },
+    { value: "o3", label: "o3" },
+  ],
 };
 
 const COLOR_SOLIDS = {
@@ -49,19 +68,28 @@ const customInstructionsEl = document.getElementById("customInstructions");
 const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
 
-function updatePlaceholder() {
-  modelEl.placeholder = DEFAULTS[providerEl.value] + " (default)";
+function updateModelOptions(selectedModel) {
+  const models = MODELS[providerEl.value] || [];
+  modelEl.innerHTML = "";
+  for (const m of models) {
+    const opt = document.createElement("option");
+    opt.value = m.value;
+    opt.textContent = m.label;
+    modelEl.appendChild(opt);
+  }
+  if (selectedModel && models.some((m) => m.value === selectedModel)) {
+    modelEl.value = selectedModel;
+  }
 }
 
-providerEl.addEventListener("change", updatePlaceholder);
+providerEl.addEventListener("change", () => updateModelOptions());
 
 // Load saved settings
 chrome.storage.sync.get(["provider", "apiKey", "model", "customInstructions"], (data) => {
   if (data.provider) providerEl.value = data.provider;
   if (data.apiKey) apiKeyEl.value = data.apiKey;
-  if (data.model) modelEl.value = data.model;
   if (data.customInstructions) customInstructionsEl.value = data.customInstructions;
-  updatePlaceholder();
+  updateModelOptions(data.model);
 });
 
 apiKeyEl.addEventListener("keydown", (e) => {
@@ -72,7 +100,7 @@ saveBtn.addEventListener("click", () => {
   const settings = {
     provider: providerEl.value,
     apiKey: apiKeyEl.value.trim(),
-    model: modelEl.value.trim() || "",
+    model: modelEl.value,
     customInstructions: customInstructionsEl.value.trim(),
   };
 

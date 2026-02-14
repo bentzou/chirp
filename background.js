@@ -1,7 +1,7 @@
 const DEFAULTS = {
-  openai: "gpt-4o",
+  openai: "gpt-4.1",
   anthropic: "claude-sonnet-4-5-20250929",
-  google: "gemini-2.0-flash",
+  google: "gemini-2.5-flash",
 };
 
 chrome.runtime.onInstalled.addListener((details) => {
