@@ -5,7 +5,7 @@
   "description": "Annotate, highlight and AI chat with websites",
   "scripts": {
     "build": "bash scripts/build.sh",
-    "version": "bash scripts/sync-version.sh && git add manifest.json",
+    "version": "bash scripts/sync-version.sh && git add src/manifest.json",
     "release": "bash scripts/release.sh"
   }
 }

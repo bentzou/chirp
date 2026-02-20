@@ -10,21 +10,6 @@ ZIPNAME="chirpy-v${VERSION}.zip"
 rm -rf "$OUTDIR"
 mkdir -p "$OUTDIR"
 
-zip -r "$OUTDIR/$ZIPNAME" \
-  manifest.json \
-  background.js \
-  content.js \
-  popup.js \
-  popup.html \
-  content.css \
-  popup.css \
-  bubble.css \
-  tooltip.html \
-  tooltip.js \
-  welcome.html \
-  welcome.css \
-  welcome.js \
-  icons/ \
-  lib/
+cd src && zip -r "../$OUTDIR/$ZIPNAME" .
 
 echo "Built $OUTDIR/$ZIPNAME"
