@@ -73,7 +73,11 @@ document.addEventListener("mousedown", (e) => {
   }
 });
 
-document.addEventListener("keydown", () => {
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && currentHighlightId) {
+    closeBubble();
+    return;
+  }
   if (!currentHighlightId) removeTooltip();
 });
 
