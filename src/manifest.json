@@ -24,7 +24,10 @@
       ],
       "js": [
         "lib/marked.min.js",
-        "content.js"
+        "core.js",
+        "highlight.js",
+        "bubble.js",
+        "events.js"
       ],
       "css": [
         "content.css"
