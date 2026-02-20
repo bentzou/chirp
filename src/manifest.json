@@ -23,6 +23,7 @@
         "<all_urls>"
       ],
       "js": [
+        "lib/purify.js",
         "lib/marked.js",
         "core.js",
         "highlight.js",

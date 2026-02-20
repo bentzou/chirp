@@ -165,23 +165,16 @@ function getPageContext() {
 }
 
 // ── Markdown rendering ────────────────────────────────────────────
-// marked.min.js is loaded as a content script before this file,
-// so `marked` is available directly in the isolated world.
+// purify.js and marked.js are loaded as content scripts before this file,
+// so `DOMPurify` and `marked` are available directly in the isolated world.
 
 if (typeof marked !== "undefined") {
   marked.setOptions({ breaks: true });
 }
 
-/** Sanitize HTML — strip <script> tags and on* event attributes */
-function sanitizeHtml(html) {
-  html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
-  html = html.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "");
-  return html;
-}
-
 function renderMarkdown(text) {
   if (typeof marked !== "undefined") {
-    return sanitizeHtml(marked.parse(text));
+    return DOMPurify.sanitize(marked.parse(text));
   }
   const div = document.createElement("div");
   div.textContent = text;
