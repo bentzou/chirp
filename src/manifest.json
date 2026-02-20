@@ -23,7 +23,7 @@
         "<all_urls>"
       ],
       "js": [
-        "lib/marked.min.js",
+        "lib/marked.js",
         "core.js",
         "highlight.js",
         "bubble.js",
@@ -52,7 +52,7 @@
       "resources": [
         "bubble.css",
         "tooltip.html",
-        "lib/marked.min.js",
+        "lib/marked.js",
         "icons/icon16.png",
         "icons/icon48.png"
       ],
