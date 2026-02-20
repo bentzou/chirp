@@ -311,6 +311,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
+// ── Keyboard shortcut → page chat ───────────────────────────────────
+
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "open-page-chat") {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: "openPageChat" }).catch(() => {});
+      }
+    });
+  }
+});
+
 // ── Toolbar button: single-click → popup, double-click → page chat ──
 
 let clickTimer = null;
