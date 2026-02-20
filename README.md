@@ -43,7 +43,10 @@ You can also configure your provider, API key, model, and custom instructions fr
 ```
 manifest.json        Extension manifest (MV3)
 background.js        Service worker: AI API calls, highlight storage
-content.js           Content script: highlighting, tooltip, chat bubble
+core.js              Shared state, constants, utilities, markdown rendering
+highlight.js         Text highlighting: wrap ranges, persist, restore
+bubble.js            Chat bubble UI & messaging (Shadow DOM)
+events.js            Tooltip, DOM event handlers, popup message listener, init
 content.css          Tooltip styles
 bubble.css           Chat bubble styles (injected into Shadow DOM)
 popup.html           Extension popup markup
