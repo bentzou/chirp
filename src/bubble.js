@@ -141,6 +141,10 @@ function openBubble(highlightId, selText, messages) {
   sendBtn.addEventListener("click", handleSend);
   input.addEventListener("keydown", (e) => {
     e.stopPropagation();
+    if (e.key === "Escape") {
+      closeBubble();
+      return;
+    }
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
