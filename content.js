@@ -546,6 +546,7 @@
 
     sendBtn.addEventListener("click", handleSend);
     input.addEventListener("keydown", (e) => {
+      e.stopPropagation();
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleSend();
