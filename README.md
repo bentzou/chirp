@@ -1,4 +1,4 @@
-# Chirpy
+# <img src="src/icons/icon128.png" width="32" height="32" alt="Chirpy icon"> Chirpy
 
 AI highlighting for the web. Select text on any page, click Chirpy, and get an instant AI explanation. All highlights and conversations stay private in your browser. Bring your own OpenAI, Anthropic, or Google Gemini API key.
 
