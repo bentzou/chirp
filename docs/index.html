@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chirp — AI highlighting for the web</title>
+  <meta name="description" content="Select text on any page, click Chirp, and get an instant AI explanation. All highlights and conversations stay private in your browser.">
+  <link rel="icon" type="image/png" href="icons/icon48.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── Hero ──────────────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="hero-grain"></div>
+    <div class="hero-inner">
+      <div class="hero-badge anim-in">
+        <img src="icons/icon128.png" alt="" class="hero-icon">
+      </div>
+      <h1 class="hero-title anim-in" style="--d:.1s">Chirp</h1>
+      <p class="hero-tagline anim-in" style="--d:.2s">Highlight anything.<br>Chat with AI about it.</p>
+      <p class="hero-sub anim-in" style="--d:.3s">A lighter-weight, privacy-respecting alternative to AI browsers.</p>
+      <a href="#install" class="hero-cta anim-in" style="--d:.4s">Get Chirp</a>
+    </div>
+  </header>
+
+  <!-- ── Features ──────────────────────────────────────────────── -->
+  <section class="features" id="features">
+
+    <!-- Feature 1 -->
+    <div class="feature reveal">
+      <div class="feature-text">
+        <span class="feature-num">01</span>
+        <h2 class="feature-title">Chat with AI about any text</h2>
+        <p><strong>Selection chat.</strong> Select text and click the
+          <span class="pill"><img src="icons/icon48.png" alt="" class="pill-icon">Chirp</span>
+          tooltip to highlight it and start a conversation.</p>
+        <p><strong>Page chat.</strong> Press <kbd>Alt+C</kbd> to chat about the entire page — no highlight needed.</p>
+        <p><strong>Persistent.</strong> Highlights are saved locally. Leave and come back anytime.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="mockup-page">
+          <div class="mockup-line" style="width:90%"></div>
+          <div class="mockup-line" style="width:80%"></div>
+          <div class="mockup-line">
+            <span class="mockup-line-text" style="width:20%"></span>
+            <span class="mockup-highlight">highlighted text</span>
+            <span class="mockup-line-text" style="width:25%"></span>
+          </div>
+          <div class="mockup-line" style="width:70%"></div>
+          <div class="mockup-tooltip">
+            <img src="icons/icon48.png" alt="" class="mockup-tooltip-icon">
+          </div>
+        </div>
+        <div class="mockup-bubble mockup-bubble-attached">
+          <div class="mockup-bubble-header">
+            <img src="icons/icon48.png" alt="" class="mockup-bubble-icon">
+            <span class="mockup-bubble-brand">Chirp</span>
+            <span class="mockup-bubble-sep">|</span>
+            <span class="mockup-bubble-title">highlighted text</span>
+            <span class="mockup-bubble-close">&times;</span>
+          </div>
+          <div class="mockup-bubble-messages">
+            <div class="mockup-msg mockup-msg-assistant">This refers to&hellip;</div>
+          </div>
+          <div class="mockup-bubble-input">
+            <span class="mockup-input-placeholder">Ask about this text&hellip;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2 -->
+    <div class="feature feature--reverse reveal">
+      <div class="feature-text">
+        <span class="feature-num">02</span>
+        <h2 class="feature-title">Bring your own API key</h2>
+        <p>Use your existing OpenAI, Anthropic, Google Gemini, or OpenRouter account. No Chirp account, no subscription, no middleman.</p>
+        <p>Your key is stored locally in your browser and only sent directly to the provider you choose.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="mockup-form">
+          <div class="mockup-form-row">
+            <span class="mockup-label">AI Provider</span>
+            <span class="mockup-value">Anthropic</span>
+          </div>
+          <div class="mockup-form-row">
+            <span class="mockup-label">API Key</span>
+            <span class="mockup-value mockup-value--muted">sk-ant-&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>
+          </div>
+          <div class="mockup-form-row">
+            <span class="mockup-label">Model</span>
+            <span class="mockup-value">Claude Sonnet 4.5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3 -->
+    <div class="feature reveal">
+      <div class="feature-text">
+        <span class="feature-num">03</span>
+        <h2 class="feature-title">Manage your highlights</h2>
+        <p>Click the toolbar icon to see all your highlights on the current page. Jump to any highlight or delete ones you no longer need.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="mockup-popup">
+          <div class="mockup-popup-header">
+            <img src="icons/icon48.png" alt="" class="mockup-popup-icon">
+            <span class="mockup-popup-brand">Chirp</span>
+            <div class="mockup-toggle">
+              <div class="mockup-toggle-track active"><div class="mockup-toggle-thumb"></div></div>
+            </div>
+          </div>
+          <div class="mockup-popup-tabs">
+            <span class="mockup-tab active">Highlights</span>
+            <span class="mockup-tab">Settings</span>
+          </div>
+          <div class="mockup-annotation-item">
+            <span class="mockup-annotation-dot"></span>
+            <span class="mockup-annotation-text">highlighted text</span>
+            <span class="mockup-annotation-delete">&times;</span>
+          </div>
+          <div class="mockup-annotation-item">
+            <span class="mockup-annotation-dot" style="background:#3b82f6"></span>
+            <span class="mockup-annotation-text">another selection</span>
+            <span class="mockup-annotation-delete">&times;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 4 -->
+    <div class="feature feature--reverse reveal">
+      <div class="feature-text">
+        <span class="feature-num">04</span>
+        <h2 class="feature-title">Personalize AI responses</h2>
+        <p>Choose your AI model and add custom instructions to shape every response.</p>
+        <ul class="feature-examples">
+          <li>"Always respond in Spanish"</li>
+          <li>"Explain like I'm 5"</li>
+          <li>"Be brief, use bullet points"</li>
+          <li>"I'm a doctor, assume medical knowledge"</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <div class="mockup-popup">
+          <div class="mockup-popup-header">
+            <img src="icons/icon48.png" alt="" class="mockup-popup-icon">
+            <span class="mockup-popup-brand">Chirp</span>
+            <div class="mockup-toggle">
+              <div class="mockup-toggle-track active"><div class="mockup-toggle-thumb"></div></div>
+            </div>
+          </div>
+          <div class="mockup-popup-tabs">
+            <span class="mockup-tab">Highlights</span>
+            <span class="mockup-tab active">Settings</span>
+          </div>
+          <div class="mockup-settings-row">
+            <span class="mockup-settings-label">AI Provider</span>
+            <span class="mockup-settings-value">Anthropic</span>
+          </div>
+          <div class="mockup-settings-row">
+            <span class="mockup-settings-label">API Key</span>
+            <span class="mockup-settings-value">sk-ant-&bull;&bull;&bull;&bull;</span>
+          </div>
+          <div class="mockup-settings-row">
+            <span class="mockup-settings-label">Custom Instructions</span>
+            <span class="mockup-settings-value mockup-settings-value--muted">e.g. "Always respond in Spanish"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── Providers ─────────────────────────────────────────────── -->
+  <section class="providers reveal" id="providers">
+    <h2 class="section-title">Supported providers</h2>
+    <div class="provider-grid">
+      <div class="provider-card">
+        <span class="provider-name">Anthropic</span>
+        <span class="provider-default">Claude Sonnet 4.5</span>
+        <span class="provider-also">Haiku 4.5, Opus 4.6</span>
+      </div>
+      <div class="provider-card">
+        <span class="provider-name">OpenAI</span>
+        <span class="provider-default">GPT-4.1</span>
+        <span class="provider-also">GPT-4.1 Mini, o4-mini, o3</span>
+      </div>
+      <div class="provider-card">
+        <span class="provider-name">Google Gemini</span>
+        <span class="provider-default">Gemini 2.5 Flash</span>
+        <span class="provider-also">2.5 Flash Lite, 2.5 Pro</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Install ───────────────────────────────────────────────── -->
+  <section class="install reveal" id="install">
+    <h2 class="section-title">Get started</h2>
+    <div class="install-steps">
+      <div class="install-step">
+        <span class="install-num">1</span>
+        <p>Clone the repo or <a href="https://github.com/bentzou/chirpy" target="_blank" rel="noopener">download the source</a></p>
+      </div>
+      <div class="install-step">
+        <span class="install-num">2</span>
+        <p>Open <code>chrome://extensions</code> and enable <strong>Developer mode</strong></p>
+      </div>
+      <div class="install-step">
+        <span class="install-num">3</span>
+        <p>Click <strong>Load unpacked</strong> and select the <code>src</code> folder</p>
+      </div>
+      <div class="install-step">
+        <span class="install-num">4</span>
+        <p>Select text on any page and click the Chirp tooltip</p>
+      </div>
+    </div>
+    <a href="https://github.com/bentzou/chirpy" class="install-cta" target="_blank" rel="noopener">View on GitHub</a>
+  </section>
+
+  <!-- ── Footer ────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <span>&copy; 2026 Chirp</span>
+  </footer>
+
+  <script>
+    /* Scroll-triggered reveal */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* Hero stagger — trigger after fonts load */
+    document.fonts.ready.then(() => {
+      document.querySelectorAll('.anim-in').forEach(el => el.classList.add('go'));
+    });
+
+    /* Smooth scroll for anchor links */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+
+</body>
+</html>
