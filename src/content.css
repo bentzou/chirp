@@ -1,11 +1,11 @@
 /* Highlight wrapper injected into the page */
-chirpy-hl {
+chirp-hl {
   cursor: pointer;
   border-radius: 2px;
   transition: background-color 0.15s;
 }
 
 /* Keep the bubble host out of page layout */
-chirpy-bubble-host {
+chirp-bubble-host {
   display: contents;
 }

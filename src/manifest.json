@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Chirpy",
+  "name": "Chirp",
   "version": "1.0.0",
   "version_name": "1.0.0",
   "description": "Highlight text on any webpage and chat with AI about it",
@@ -53,7 +53,7 @@
       "suggested_key": {
         "default": "Alt+C"
       },
-      "description": "Open Chirpy page chat"
+      "description": "Open Chirp page chat"
     }
   },
   "web_accessible_resources": [

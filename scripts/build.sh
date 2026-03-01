@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 
 VERSION=$(jq -r '.version' package.json)
 OUTDIR="dist"
-ZIPNAME="chirpy-v${VERSION}.zip"
+ZIPNAME="chirp-v${VERSION}.zip"
 
 rm -rf "$OUTDIR"
 mkdir -p "$OUTDIR"

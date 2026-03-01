@@ -13,11 +13,11 @@ function removeTooltip() {
 // separate from the parent page, so no site script (Reddit, etc.) can
 // intercept clicks.  The iframe communicates back via postMessage.
 window.addEventListener("message", (e) => {
-  if (e.data?.type !== "chirpy-tooltip-click" || !tooltipAction) return;
+  if (e.data?.type !== "chirp-tooltip-click" || !tooltipAction) return;
   const fn = tooltipAction;
   tooltipAction = null;
   removeTooltip();
-  try { fn(); } catch (err) { console.error("[Chirpy] highlightRange failed:", err); }
+  try { fn(); } catch (err) { console.error("[Chirp] highlightRange failed:", err); }
 });
 
 function showTooltip(x, y, selection) {
@@ -48,17 +48,17 @@ function showTooltip(x, y, selection) {
 // ── Selection & tooltip event handlers ────────────────────────────
 
 document.addEventListener("mouseup", (e) => {
-  if (!chirpyEnabled) return;
+  if (!chirpEnabled) return;
   // Small delay to let selection finalize
   setTimeout(() => {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed || !sel.toString().trim()) {
-      if (!currentHighlightId && !e.target.closest?.("chirpy-hl") && !(tooltip && tooltip === e.target)) removeTooltip();
+      if (!currentHighlightId && !e.target.closest?.("chirp-hl") && !(tooltip && tooltip === e.target)) removeTooltip();
       return;
     }
 
     // Don't show tooltip if click is inside our bubble
-    if (e.target.closest?.("chirpy-bubble-host")) return;
+    if (e.target.closest?.("chirp-bubble-host")) return;
 
     const x = e.pageX - 14;
     const y = e.pageY - 40;
@@ -68,7 +68,7 @@ document.addEventListener("mouseup", (e) => {
 
 document.addEventListener("mousedown", (e) => {
   if (e.detail >= 2) return; // Don't remove on multi-click (prevents tooltip blink on triple-click)
-  if (tooltip && e.target !== tooltip && !currentHighlightId && !e.target.closest?.("chirpy-hl")) {
+  if (tooltip && e.target !== tooltip && !currentHighlightId && !e.target.closest?.("chirp-hl")) {
     removeTooltip();
   }
 });
@@ -84,7 +84,7 @@ document.addEventListener("keydown", (e) => {
 // ── Click on highlight to re-open bubble ──────────────────────────
 
 document.addEventListener("click", (e) => {
-  const hlEl = e.target.closest("chirpy-hl");
+  const hlEl = e.target.closest("chirp-hl");
   if (!hlEl) return;
 
   const id = hlEl.dataset.id;
@@ -114,7 +114,7 @@ document.addEventListener("mousedown", (e) => {
   // Check if click is inside bubble, tooltip, or a highlight
   const insideBubble = path.some((el) => el === bubbleHost);
   const insideTooltip = tooltip && path.some((el) => el === tooltip);
-  const insideHighlight = e.target.closest?.("chirpy-hl");
+  const insideHighlight = e.target.closest?.("chirp-hl");
   if (!insideBubble && !insideTooltip && !insideHighlight) {
     closeBubble();
   }
@@ -124,7 +124,7 @@ document.addEventListener("mousedown", (e) => {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "scrollToHighlight") {
-    const els = document.querySelectorAll(`chirpy-hl[data-id="${msg.id}"]`);
+    const els = document.querySelectorAll(`chirp-hl[data-id="${msg.id}"]`);
     if (els.length > 0) {
       els[0].scrollIntoView({ behavior: "smooth", block: "center" });
       // Flash yellow briefly
@@ -159,8 +159,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (currentHighlightId === msg.id) {
       closeBubble();
     }
-    // Unwrap all <chirpy-hl> elements for that ID
-    const els = document.querySelectorAll(`chirpy-hl[data-id="${msg.id}"]`);
+    // Unwrap all <chirp-hl> elements for that ID
+    const els = document.querySelectorAll(`chirp-hl[data-id="${msg.id}"]`);
     for (const el of els) {
       const parent = el.parentNode;
       while (el.firstChild) {

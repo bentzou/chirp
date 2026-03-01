@@ -114,7 +114,7 @@ function buildOpenRouterRequest(settings, systemPrompt, messages) {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${settings.apiKey}`,
-      "HTTP-Referer": "https://chirpy.app",
+      "HTTP-Referer": "https://chirp.app",
     },
     body: {
       model: settings.model,
@@ -165,14 +165,14 @@ function extractDelta(provider, parsed) {
 // ── Message handling ───────────────────────────────────────────────
 
 chrome.runtime.onConnect.addListener((port) => {
-  if (port.name !== "chirpy-chat") return;
+  if (port.name !== "chirp-chat") return;
 
   port.onMessage.addListener(async (msg) => {
     if (msg.type !== "chat") return;
 
     const settings = await getSettings();
     if (!settings.apiKey) {
-      port.postMessage({ type: "error", error: "No API key configured. Open Chirpy settings to add one.", code: "NO_API_KEY" });
+      port.postMessage({ type: "error", error: "No API key configured. Open Chirp settings to add one.", code: "NO_API_KEY" });
       return;
     }
 
@@ -180,7 +180,7 @@ chrome.runtime.onConnect.addListener((port) => {
 
     if (msg.mode === "page-chat") {
       systemPrompt = [
-        "You are Chirpy, a helpful assistant embedded in the user's browser.",
+        "You are Chirp, a helpful assistant embedded in the user's browser.",
         "The user is chatting about the webpage they are currently viewing.",
         "",
         msg.pageContext
@@ -197,7 +197,7 @@ chrome.runtime.onConnect.addListener((port) => {
       ].join("\n");
     } else {
       systemPrompt = [
-        "You are Chirpy, a helpful assistant embedded in the user's browser.",
+        "You are Chirp, a helpful assistant embedded in the user's browser.",
         "The user has highlighted a specific term or passage on a webpage.",
         "",
         "=== Highlighted Text ===",

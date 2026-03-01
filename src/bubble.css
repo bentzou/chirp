@@ -1,6 +1,6 @@
 /* Chat bubble styles — lives inside Shadow DOM */
 
-.chirpy-bubble {
+.chirp-bubble {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -23,7 +23,7 @@
 }
 
 /* Header */
-.chirpy-header {
+.chirp-header {
   display: flex;
   align-items: center;
   padding: 10px 14px;
@@ -36,25 +36,25 @@
   user-select: none;
 }
 
-.chirpy-logo {
+.chirp-logo {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
   border-radius: 4px;
 }
 
-.chirpy-brand {
+.chirp-brand {
   font-weight: 700;
   font-size: 13px;
   flex-shrink: 0;
 }
 
-.chirpy-sep {
+.chirp-sep {
   opacity: 0.5;
   flex-shrink: 0;
 }
 
-.chirpy-title {
+.chirp-title {
   font-weight: 400;
   font-size: 13px;
   overflow: hidden;
@@ -65,9 +65,9 @@
   opacity: 0.85;
 }
 
-.chirpy-minimize,
-.chirpy-expand,
-.chirpy-close {
+.chirp-minimize,
+.chirp-expand,
+.chirp-close {
   background: none;
   border: none;
   color: #fff;
@@ -79,39 +79,39 @@
   flex-shrink: 0;
 }
 
-.chirpy-expand {
+.chirp-expand {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.chirpy-minimize:hover,
-.chirpy-expand:hover,
-.chirpy-close:hover {
+.chirp-minimize:hover,
+.chirp-expand:hover,
+.chirp-close:hover {
   opacity: 1;
 }
 
 /* Minimized state */
-.chirpy-minimized {
+.chirp-minimized {
   max-height: none;
   min-height: 0;
   resize: none;
 }
 
-.chirpy-minimized .chirpy-messages,
-.chirpy-minimized .chirpy-input-bar {
+.chirp-minimized .chirp-messages,
+.chirp-minimized .chirp-input-bar {
   display: none;
 }
 
 /* Expanded state */
-.chirpy-expanded {
+.chirp-expanded {
   max-height: none;
   height: calc(100vh - 40px);
   top: 20px;
 }
 
 /* Messages */
-.chirpy-messages {
+.chirp-messages {
   flex: 1;
   overflow-y: auto;
   padding: 12px 14px;
@@ -120,7 +120,7 @@
   gap: 8px;
 }
 
-.chirpy-msg {
+.chirp-msg {
   max-width: 85%;
   padding: 8px 12px;
   border-radius: 12px;
@@ -129,40 +129,40 @@
   font-size: 13px;
 }
 
-.chirpy-msg-user {
+.chirp-msg-user {
   align-self: flex-end;
   background: #f59e0b;
   color: #fff;
   border-bottom-right-radius: 4px;
 }
 
-.chirpy-msg-user p { margin: 4px 0; }
-.chirpy-msg-user p:first-child { margin-top: 0; }
-.chirpy-msg-user p:last-child { margin-bottom: 0; }
-.chirpy-msg-user code { background: rgba(255, 255, 255, 0.2); padding: 1px 4px; border-radius: 3px; font-size: 0.9em; }
-.chirpy-msg-user pre { background: rgba(0, 0, 0, 0.2); padding: 6px 8px; border-radius: 6px; overflow-x: auto; margin: 4px 0; font-size: 12px; }
-.chirpy-msg-user pre code { background: none; padding: 0; }
-.chirpy-msg-user a { color: #fff; text-decoration: underline; }
+.chirp-msg-user p { margin: 4px 0; }
+.chirp-msg-user p:first-child { margin-top: 0; }
+.chirp-msg-user p:last-child { margin-bottom: 0; }
+.chirp-msg-user code { background: rgba(255, 255, 255, 0.2); padding: 1px 4px; border-radius: 3px; font-size: 0.9em; }
+.chirp-msg-user pre { background: rgba(0, 0, 0, 0.2); padding: 6px 8px; border-radius: 6px; overflow-x: auto; margin: 4px 0; font-size: 12px; }
+.chirp-msg-user pre code { background: none; padding: 0; }
+.chirp-msg-user a { color: #fff; text-decoration: underline; }
 
-.chirpy-msg-assistant {
+.chirp-msg-assistant {
   align-self: flex-start;
   background: #f3f4f6;
   color: #1a1a1a;
   border-bottom-left-radius: 4px;
 }
 
-.chirpy-msg-error {
+.chirp-msg-error {
   background: #fee2e2;
   color: #991b1b;
 }
 
 /* Loading dots — three-dot typing indicator */
-.chirpy-msg-loading {
+.chirp-msg-loading {
   display: flex;
   align-items: center;
 }
 
-.chirpy-msg-loading::after {
+.chirp-msg-loading::after {
   content: "";
   display: block;
   width: 5px;
@@ -171,10 +171,10 @@
   margin-right: 20px;
   background: #9ca3af;
   box-shadow: 10px 0 0 #9ca3af, 20px 0 0 #9ca3af;
-  animation: chirpy-typing 1.2s ease-in-out infinite;
+  animation: chirp-typing 1.2s ease-in-out infinite;
 }
 
-@keyframes chirpy-typing {
+@keyframes chirp-typing {
   0%, 100% {
     background: #9ca3af;
     box-shadow: 10px 0 0 #d1d5db, 20px 0 0 #d1d5db;
@@ -191,43 +191,43 @@
 
 /* ── Markdown prose styles for assistant messages ─────────────── */
 
-.chirpy-msg-assistant h1,
-.chirpy-msg-assistant h2,
-.chirpy-msg-assistant h3,
-.chirpy-msg-assistant h4,
-.chirpy-msg-assistant h5,
-.chirpy-msg-assistant h6 {
+.chirp-msg-assistant h1,
+.chirp-msg-assistant h2,
+.chirp-msg-assistant h3,
+.chirp-msg-assistant h4,
+.chirp-msg-assistant h5,
+.chirp-msg-assistant h6 {
   margin: 8px 0 4px;
   line-height: 1.3;
 }
 
-.chirpy-msg-assistant h1 { font-size: 1.2em; }
-.chirpy-msg-assistant h2 { font-size: 1.1em; }
-.chirpy-msg-assistant h3 { font-size: 1.05em; }
+.chirp-msg-assistant h1 { font-size: 1.2em; }
+.chirp-msg-assistant h2 { font-size: 1.1em; }
+.chirp-msg-assistant h3 { font-size: 1.05em; }
 
-.chirpy-msg-assistant p {
+.chirp-msg-assistant p {
   margin: 4px 0;
 }
 
-.chirpy-msg-assistant p:first-child {
+.chirp-msg-assistant p:first-child {
   margin-top: 0;
 }
 
-.chirpy-msg-assistant p:last-child {
+.chirp-msg-assistant p:last-child {
   margin-bottom: 0;
 }
 
-.chirpy-msg-assistant ul,
-.chirpy-msg-assistant ol {
+.chirp-msg-assistant ul,
+.chirp-msg-assistant ol {
   margin: 4px 0;
   padding-left: 1.4em;
 }
 
-.chirpy-msg-assistant li {
+.chirp-msg-assistant li {
   margin: 2px 0;
 }
 
-.chirpy-msg-assistant code {
+.chirp-msg-assistant code {
   background: rgba(0, 0, 0, 0.06);
   padding: 1px 4px;
   border-radius: 3px;
@@ -235,7 +235,7 @@
   font-family: "SF Mono", Monaco, Consolas, monospace;
 }
 
-.chirpy-msg-assistant pre {
+.chirp-msg-assistant pre {
   background: #1e1e1e;
   color: #d4d4d4;
   padding: 8px 10px;
@@ -246,7 +246,7 @@
   line-height: 1.4;
 }
 
-.chirpy-msg-assistant pre code {
+.chirp-msg-assistant pre code {
   background: none;
   padding: 0;
   border-radius: 0;
@@ -254,57 +254,57 @@
   font-size: inherit;
 }
 
-.chirpy-msg-assistant blockquote {
+.chirp-msg-assistant blockquote {
   border-left: 3px solid #d1d5db;
   margin: 6px 0;
   padding: 2px 10px;
   color: #6b7280;
 }
 
-.chirpy-msg-assistant a {
+.chirp-msg-assistant a {
   color: #2563eb;
   text-decoration: underline;
 }
 
-.chirpy-msg-assistant a:hover {
+.chirp-msg-assistant a:hover {
   color: #1d4ed8;
 }
 
-.chirpy-msg-assistant strong {
+.chirp-msg-assistant strong {
   font-weight: 600;
 }
 
-.chirpy-msg-assistant em {
+.chirp-msg-assistant em {
   font-style: italic;
 }
 
-.chirpy-msg-assistant hr {
+.chirp-msg-assistant hr {
   border: none;
   border-top: 1px solid #e5e7eb;
   margin: 8px 0;
 }
 
-.chirpy-msg-assistant table {
+.chirp-msg-assistant table {
   border-collapse: collapse;
   margin: 6px 0;
   font-size: 12px;
   width: 100%;
 }
 
-.chirpy-msg-assistant th,
-.chirpy-msg-assistant td {
+.chirp-msg-assistant th,
+.chirp-msg-assistant td {
   border: 1px solid #d1d5db;
   padding: 4px 8px;
   text-align: left;
 }
 
-.chirpy-msg-assistant th {
+.chirp-msg-assistant th {
   background: #f3f4f6;
   font-weight: 600;
 }
 
 /* Input bar */
-.chirpy-input-bar {
+.chirp-input-bar {
   display: flex;
   align-items: flex-end;
   padding: 10px 12px;
@@ -313,7 +313,7 @@
   flex-shrink: 0;
 }
 
-.chirpy-input {
+.chirp-input {
   flex: 1;
   padding: 8px 12px;
   border: 1px solid #d1d5db;
@@ -327,12 +327,12 @@
   max-height: 120px;
 }
 
-.chirpy-input:focus {
+.chirp-input:focus {
   border-color: #f59e0b;
   box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
 }
 
-.chirpy-send {
+.chirp-send {
   padding: 8px 16px;
   background: #f59e0b;
   color: #fff;
@@ -344,12 +344,12 @@
   white-space: nowrap;
 }
 
-.chirpy-send:hover {
+.chirp-send:hover {
   background: #d97706;
 }
 
 /* Inline setup form */
-.chirpy-setup-form {
+.chirp-setup-form {
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -360,14 +360,14 @@
   border-radius: 12px;
 }
 
-.chirpy-setup-label {
+.chirp-setup-label {
   font-size: 13px;
   font-weight: 600;
   color: #374151;
 }
 
-.chirpy-setup-select,
-.chirpy-setup-input {
+.chirp-setup-select,
+.chirp-setup-input {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid #d1d5db;
@@ -379,31 +379,31 @@
   box-sizing: border-box;
 }
 
-.chirpy-setup-select:focus,
-.chirpy-setup-input:focus {
+.chirp-setup-select:focus,
+.chirp-setup-input:focus {
   border-color: #f59e0b;
   box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
 }
 
-.chirpy-setup-save {
+.chirp-setup-save {
   width: 100%;
 }
 
-.chirpy-setup-save:disabled {
+.chirp-setup-save:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
 /* Scrollbar styling */
-.chirpy-messages::-webkit-scrollbar {
+.chirp-messages::-webkit-scrollbar {
   width: 6px;
 }
 
-.chirpy-messages::-webkit-scrollbar-track {
+.chirp-messages::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.chirpy-messages::-webkit-scrollbar-thumb {
+.chirp-messages::-webkit-scrollbar-thumb {
   background: #d1d5db;
   border-radius: 3px;
 }

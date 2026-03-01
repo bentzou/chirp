@@ -2,7 +2,7 @@
 
 function ensureBubbleHost() {
   if (bubbleHost) return;
-  bubbleHost = document.createElement("chirpy-bubble-host");
+  bubbleHost = document.createElement("chirp-bubble-host");
   bubbleHost.style.cssText = "display:contents;pointer-events:auto;visibility:visible;opacity:1;";
   bubbleShadow = bubbleHost.attachShadow({ mode: "open" });
 
@@ -20,48 +20,48 @@ function openBubble(highlightId, selText, messages) {
   currentHighlightId = highlightId;
 
   // Clear previous bubble content (keep <link>)
-  const existing = bubbleShadow.querySelector(".chirpy-bubble");
+  const existing = bubbleShadow.querySelector(".chirp-bubble");
   if (existing) existing.remove();
 
   const bubble = document.createElement("div");
-  bubble.className = "chirpy-bubble";
+  bubble.className = "chirp-bubble";
 
   // Header
   const header = document.createElement("div");
-  header.className = "chirpy-header";
+  header.className = "chirp-header";
 
   const logo = document.createElement("img");
-  logo.className = "chirpy-logo";
+  logo.className = "chirp-logo";
   logo.src = chrome.runtime.getURL("icons/icon48.png");
   logo.alt = "";
 
   const brand = document.createElement("span");
-  brand.className = "chirpy-brand";
-  brand.textContent = "Chirpy";
+  brand.className = "chirp-brand";
+  brand.textContent = "Chirp";
 
   const sep = document.createElement("span");
-  sep.className = "chirpy-sep";
+  sep.className = "chirp-sep";
   sep.textContent = "|";
 
   const title = document.createElement("span");
-  title.className = "chirpy-title";
+  title.className = "chirp-title";
   title.textContent = selText.length > 40 ? selText.slice(0, 37) + "\u2026" : selText;
   title.title = selText;
 
   const minBtn = document.createElement("button");
-  minBtn.className = "chirpy-minimize";
+  minBtn.className = "chirp-minimize";
   minBtn.textContent = "\u2013";
   function setBubbleState(state) {
-    const isMinimized = bubble.classList.contains("chirpy-minimized");
-    const isExpanded = bubble.classList.contains("chirpy-expanded");
+    const isMinimized = bubble.classList.contains("chirp-minimized");
+    const isExpanded = bubble.classList.contains("chirp-expanded");
 
-    bubble.classList.remove("chirpy-minimized", "chirpy-expanded");
+    bubble.classList.remove("chirp-minimized", "chirp-expanded");
 
     if (state === "minimized" && !isMinimized) {
-      bubble.classList.add("chirpy-minimized");
+      bubble.classList.add("chirp-minimized");
       removeTooltip();
     } else if (state === "expanded" && !isExpanded) {
-      bubble.classList.add("chirpy-expanded");
+      bubble.classList.add("chirp-expanded");
     }
     // else: back to normal (both removed)
   }
@@ -72,7 +72,7 @@ function openBubble(highlightId, selText, messages) {
   });
 
   const expandBtn = document.createElement("button");
-  expandBtn.className = "chirpy-expand";
+  expandBtn.className = "chirp-expand";
   expandBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>';
   expandBtn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -80,7 +80,7 @@ function openBubble(highlightId, selText, messages) {
   });
 
   const closeBtn = document.createElement("button");
-  closeBtn.className = "chirpy-close";
+  closeBtn.className = "chirp-close";
   closeBtn.textContent = "\u00d7";
   closeBtn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -102,7 +102,7 @@ function openBubble(highlightId, selText, messages) {
 
   // Messages area
   const messagesArea = document.createElement("div");
-  messagesArea.className = "chirpy-messages";
+  messagesArea.className = "chirp-messages";
 
   // Render existing messages (skip hidden auto-asks)
   for (const m of messages) {
@@ -112,10 +112,10 @@ function openBubble(highlightId, selText, messages) {
 
   // Input bar
   const inputBar = document.createElement("div");
-  inputBar.className = "chirpy-input-bar";
+  inputBar.className = "chirp-input-bar";
 
   const input = document.createElement("textarea");
-  input.className = "chirpy-input";
+  input.className = "chirp-input";
   input.rows = 1;
   input.placeholder = "Ask about this text...";
 
@@ -127,7 +127,7 @@ function openBubble(highlightId, selText, messages) {
   input.addEventListener("input", autoResize);
 
   const sendBtn = document.createElement("button");
-  sendBtn.className = "chirpy-send";
+  sendBtn.className = "chirp-send";
   sendBtn.textContent = "Send";
 
   function handleSend() {
@@ -165,20 +165,20 @@ function openBubble(highlightId, selText, messages) {
 
 function closeBubble() {
   if (!bubbleShadow) return;
-  const existing = bubbleShadow.querySelector(".chirpy-bubble");
+  const existing = bubbleShadow.querySelector(".chirp-bubble");
   if (existing) existing.remove();
   currentHighlightId = null;
   removeTooltip();
 }
 
 function openPageChat() {
-  if (!chirpyEnabled) return;
+  if (!chirpEnabled) return;
   // If page chat already open, un-minimize and focus input
   if (currentHighlightId === PAGE_CHAT_ID && bubbleShadow) {
-    const bubble = bubbleShadow.querySelector(".chirpy-bubble");
+    const bubble = bubbleShadow.querySelector(".chirp-bubble");
     if (bubble) {
-      bubble.classList.remove("chirpy-minimized");
-      const input = bubbleShadow.querySelector(".chirpy-input");
+      bubble.classList.remove("chirp-minimized");
+      const input = bubbleShadow.querySelector(".chirp-input");
       if (input) input.focus();
       return;
     }
@@ -187,14 +187,14 @@ function openPageChat() {
   openBubble(PAGE_CHAT_ID, "Page Chat", pageChatMessages);
   // Set placeholder for page chat
   if (bubbleShadow) {
-    const input = bubbleShadow.querySelector(".chirpy-input");
+    const input = bubbleShadow.querySelector(".chirp-input");
     if (input) input.placeholder = "Ask about this page...";
   }
 }
 
 function appendMessage(container, role, content) {
   const div = document.createElement("div");
-  div.className = "chirpy-msg chirpy-msg-" + role;
+  div.className = "chirp-msg chirp-msg-" + role;
   if (content) {
     div.innerHTML = renderMarkdown(content);
   }
@@ -207,18 +207,18 @@ function appendMessage(container, role, content) {
 
 function renderSetupForm(container, highlightId, selText, messagesArea, code) {
   container.textContent = "";
-  container.classList.remove("chirpy-msg-error");
-  container.classList.add("chirpy-setup-form");
+  container.classList.remove("chirp-msg-error");
+  container.classList.add("chirp-setup-form");
 
   const label = document.createElement("div");
-  label.className = "chirpy-setup-label";
+  label.className = "chirp-setup-label";
   label.textContent = code === "INVALID_API_KEY"
     ? "Your API key was rejected. Please check it and try again."
     : "Add an API key to get started";
   container.appendChild(label);
 
   const providerSelect = document.createElement("select");
-  providerSelect.className = "chirpy-setup-select";
+  providerSelect.className = "chirp-setup-select";
   for (const [value, name] of [["anthropic", "Anthropic"], ["google", "Google Gemini"], ["openai", "OpenAI"], ["openrouter", "OpenRouter"]]) {
     const opt = document.createElement("option");
     opt.value = value;
@@ -229,12 +229,12 @@ function renderSetupForm(container, highlightId, selText, messagesArea, code) {
 
   const keyInput = document.createElement("input");
   keyInput.type = "text";
-  keyInput.className = "chirpy-setup-input";
+  keyInput.className = "chirp-setup-input";
   keyInput.placeholder = "Paste your API key";
   container.appendChild(keyInput);
 
   const saveBtn = document.createElement("button");
-  saveBtn.className = "chirpy-send chirpy-setup-save";
+  saveBtn.className = "chirp-send chirp-setup-save";
   saveBtn.textContent = "Save & Retry";
   container.appendChild(saveBtn);
 
@@ -276,10 +276,10 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
 
     // Create assistant message placeholder with loading dots
     const assistantDiv = appendMessage(messagesArea, "assistant", "");
-    assistantDiv.classList.add("chirpy-msg-loading");
+    assistantDiv.classList.add("chirp-msg-loading");
 
     // Open port for streaming
-    const port = chrome.runtime.connect({ name: "chirpy-chat" });
+    const port = chrome.runtime.connect({ name: "chirp-chat" });
 
     port.postMessage({
       type: "chat",
@@ -293,7 +293,7 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
 
     port.onMessage.addListener((msg) => {
       if (msg.type === "delta") {
-        assistantDiv.classList.remove("chirpy-msg-loading");
+        assistantDiv.classList.remove("chirp-msg-loading");
         assistantText += msg.text;
         assistantDiv.innerHTML = renderMarkdown(assistantText);
         messagesArea.scrollTop = messagesArea.scrollHeight;
@@ -313,13 +313,13 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
         }
         port.disconnect();
       } else if (msg.type === "error") {
-        assistantDiv.classList.remove("chirpy-msg-loading");
+        assistantDiv.classList.remove("chirp-msg-loading");
         if (msg.code === "NO_API_KEY" || msg.code === "INVALID_API_KEY") {
           renderSetupForm(assistantDiv, highlightId, selText, messagesArea, msg.code);
         } else {
           assistantDiv.textContent = "Error: " + msg.error;
         }
-        assistantDiv.classList.add("chirpy-msg-error");
+        assistantDiv.classList.add("chirp-msg-error");
         port.disconnect();
       }
     });

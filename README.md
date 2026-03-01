@@ -1,15 +1,15 @@
-# <img src="src/icons/icon128.png" width="32" height="32" alt="Chirpy icon"> Chirpy
+# <img src="src/icons/icon128.png" width="32" height="32" alt="Chirp icon"> Chirp
 
 > Built as a lighter-weight, privacy-respecting alternative to AI browsers. Entirely vibe-coded.
 
-AI highlighting for the web. Select text on any page, click Chirpy, and get an instant AI explanation. All highlights and conversations stay private in your browser. Bring your own OpenAI, Anthropic, or Google Gemini API key.
+AI highlighting for the web. Select text on any page, click Chirp, and get an instant AI explanation. All highlights and conversations stay private in your browser. Bring your own OpenAI, Anthropic, or Google Gemini API key.
 
 ## Features
 
-- **AI highlighter** - Select text on any page, click the Chirpy bird tooltip to highlight it and chat with AI about it
+- **AI highlighter** - Select text on any page, click the Chirp bird tooltip to highlight it and chat with AI about it
 - **Page chat** - Double-click the toolbar icon to chat with AI about the entire page
 - **Private by design** - All highlights and chat history are stored locally in your browser. Nothing is sent to a server besides the AI API you choose.
-- **Bring your own key** - Use your existing OpenAI, Anthropic, or Google Gemini account. No Chirpy account needed.
+- **Bring your own key** - Use your existing OpenAI, Anthropic, or Google Gemini account. No Chirp account needed.
 - **Highlight manager** - View, navigate to, and delete all highlights on the current page
 - **Customize your AI** - Choose your model from a dropdown and add custom instructions via the settings panel
 
@@ -26,7 +26,7 @@ AI highlighting for the web. Select text on any page, click Chirpy, and get an i
 1. Clone this repo
 2. Open `chrome://extensions` and enable **Developer mode**
 3. Click **Load unpacked** and select the project folder
-4. Select text on any page and click the Chirpy tooltip to get started (you'll be prompted to add an API key)
+4. Select text on any page and click the Chirp tooltip to get started (you'll be prompted to add an API key)
 
 You can also configure your provider, API key, model, and custom instructions from the popup's **Settings** tab.
 
@@ -34,7 +34,7 @@ You can also configure your provider, API key, model, and custom instructions fr
 
 1. Select any text on a webpage. A bird tooltip appears near your cursor.
 2. Click the tooltip to highlight the text and open a chat bubble.
-3. Chirpy automatically provides a brief explanation of the highlighted text.
+3. Chirp automatically provides a brief explanation of the highlighted text.
 4. Ask follow-up questions in the chat input.
 5. Click an existing highlight to reopen its chat history.
 6. Double-click the toolbar icon to open a page-wide chat (no highlight needed).
@@ -68,7 +68,7 @@ scripts/sync-version.sh  Syncs manifest.json version from package.json
 
 ### UX & Delight
 - **Multi-color highlights** — Choose from 6 colors (amber, blue, green, pink, purple, red) via a color strip in the tooltip
-- **Keyboard shortcuts** — `Alt+Shift+H` to highlight selection, `Escape` to close chat, `Alt+Shift+S` to toggle Chirpy on/off
+- **Keyboard shortcuts** — `Alt+Shift+H` to highlight selection, `Escape` to close chat, `Alt+Shift+S` to toggle Chirp on/off
 - **Export & import** — Export all highlights as JSON (per page or all pages), import to merge by highlight ID
 - **Highlight notes** — Add personal notes to any highlight, separate from AI chat
 
@@ -89,7 +89,7 @@ scripts/sync-version.sh  Syncs manifest.json version from package.json
 npm run build
 ```
 
-Creates `dist/chirpy-v<version>.zip` ready for Chrome Web Store upload or manual installation.
+Creates `dist/chirp-v<version>.zip` ready for Chrome Web Store upload or manual installation.
 
 ## Releasing
 
@@ -101,5 +101,5 @@ This bumps the version in `package.json`, syncs it to `manifest.json`, and build
 
 ```sh
 git push && git push --tags
-# Upload dist/chirpy-v<version>.zip to Chrome Web Store
+# Upload dist/chirp-v<version>.zip to Chrome Web Store
 ```

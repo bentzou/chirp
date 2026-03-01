@@ -49,7 +49,7 @@ const version = "v" + chrome.runtime.getManifest().version;
 document.getElementById("hero-version").textContent = version;
 document.getElementById("welcome-version").textContent = version;
 
-// ── "Start using Chirpy" button ───────────────────────────────────
+// ── "Start using Chirp" button ───────────────────────────────────
 document.getElementById("start-btn").addEventListener("click", () => {
   window.close();
 });

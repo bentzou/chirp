@@ -3,7 +3,7 @@
 /** IDs already restored — prevents double-wrapping on retry */
 var restoredIds = new Set();
 
-/** Wraps the given range's text nodes in <chirpy-hl> custom elements */
+/** Wraps the given range's text nodes in <chirp-hl> custom elements */
 function wrapRangeInHighlight(range, id) {
   // Collect text nodes in the range
   const textNodes = [];
@@ -30,23 +30,23 @@ function wrapRangeInHighlight(range, id) {
 
     if (nodeRange.toString() === "") continue;
 
-    const hl = document.createElement("chirpy-hl");
+    const hl = document.createElement("chirp-hl");
     hl.dataset.id = id;
-    hl.style.backgroundColor = CHIRPY_COLOR.bg;
-    hl.style.borderBottom = "2px solid " + CHIRPY_COLOR.border;
+    hl.style.backgroundColor = CHIRP_COLOR.bg;
+    hl.style.borderBottom = "2px solid " + CHIRP_COLOR.border;
 
     hl.addEventListener("mouseenter", () => {
-      if (chirpyEnabled) hl.style.backgroundColor = CHIRPY_COLOR.hover;
+      if (chirpEnabled) hl.style.backgroundColor = CHIRP_COLOR.hover;
     });
     hl.addEventListener("mouseleave", () => {
-      if (chirpyEnabled) hl.style.backgroundColor = CHIRPY_COLOR.bg;
+      if (chirpEnabled) hl.style.backgroundColor = CHIRP_COLOR.bg;
     });
 
     nodeRange.surroundContents(hl);
   }
 }
 
-/** Wrap a Range in <chirpy-hl> elements and persist */
+/** Wrap a Range in <chirp-hl> elements and persist */
 function highlightRange(range, selText) {
   const id = generateId();
 
@@ -82,14 +82,14 @@ function highlightRange(range, selText) {
       highlight: serialized,
     }, (response) => {
       // After highlight is saved, send the automatic message
-      const messagesArea = bubbleShadow?.querySelector(".chirpy-messages");
+      const messagesArea = bubbleShadow?.querySelector(".chirp-messages");
       if (messagesArea && response?.ok) {
         sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
       }
     });
   } else {
     // If no XPath, still send message but it won't persist (edge case)
-    const messagesArea = bubbleShadow?.querySelector(".chirpy-messages");
+    const messagesArea = bubbleShadow?.querySelector(".chirp-messages");
     if (messagesArea) {
       sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
     }

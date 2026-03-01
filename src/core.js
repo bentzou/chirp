@@ -1,6 +1,6 @@
-// ── Chirpy highlight color ────────────────────────────────────────
+// ── Chirp highlight color ────────────────────────────────────────
 
-const CHIRPY_COLOR = {
+const CHIRP_COLOR = {
   bg: "rgba(245, 158, 11, 0.35)",
   border: "rgba(245, 158, 11, 0.6)",
   hover: "rgba(245, 158, 11, 0.5)",
@@ -11,10 +11,10 @@ const CHIRPY_COLOR = {
 // Declared here (first-loaded file) so every later script can
 // reference them without TDZ issues.
 
-const PAGE_CHAT_ID = "chirpy-page-chat";
+const PAGE_CHAT_ID = "chirp-page-chat";
 var pageChatMessages = [];
 
-var chirpyEnabled = true;
+var chirpEnabled = true;
 var bubbleHost = null;
 var bubbleShadow = null;
 var currentHighlightId = null;
@@ -24,20 +24,20 @@ var tooltipAction = null;
 // ── Enabled state ────────────────────────────────────────────────
 
 chrome.storage.sync.get({ enabled: true }, (data) => {
-  chirpyEnabled = data.enabled;
+  chirpEnabled = data.enabled;
 });
 
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.enabled) {
-    chirpyEnabled = changes.enabled.newValue;
-    toggleHighlightsVisibility(chirpyEnabled);
+    chirpEnabled = changes.enabled.newValue;
+    toggleHighlightsVisibility(chirpEnabled);
   }
 });
 
 function toggleHighlightsVisibility(visible) {
-  document.querySelectorAll("chirpy-hl").forEach((el) => {
-    el.style.backgroundColor = visible ? CHIRPY_COLOR.bg : "transparent";
-    el.style.borderBottom = visible ? "2px solid " + CHIRPY_COLOR.border : "none";
+  document.querySelectorAll("chirp-hl").forEach((el) => {
+    el.style.backgroundColor = visible ? CHIRP_COLOR.bg : "transparent";
+    el.style.borderBottom = visible ? "2px solid " + CHIRP_COLOR.border : "none";
     el.style.pointerEvents = visible ? "" : "none";
   });
   if (!visible) {
@@ -54,7 +54,7 @@ function contextValid() {
 }
 
 function generateId() {
-  return "chirpy-" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  return "chirp-" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
 /** Build an XPath for a text node (returns null if the node is unreachable from document.body, e.g. inside Shadow DOM) */
