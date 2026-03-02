@@ -21,14 +21,21 @@ window.addEventListener("message", (e) => {
 });
 
 function showTooltip(x, y, selection) {
-  removeTooltip();
-
   // Capture selection data eagerly — the live Selection object can be
   // cleared by the host page's JS before the user clicks the tooltip.
   let selText, range;
   if (selection && !selection.isCollapsed) {
     selText = selection.toString();
     try { range = selection.getRangeAt(0).cloneRange(); } catch (_) {}
+  }
+
+  // If tooltip already exists, just update the action without touching
+  // the DOM — avoids blink when selection expands (double → triple click).
+  if (tooltip) {
+    if (selText && range) {
+      tooltipAction = () => highlightRange(range, selText);
+    }
+    return;
   }
 
   tooltip = document.createElement("iframe");
