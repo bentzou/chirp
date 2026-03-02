@@ -85,7 +85,13 @@ document.addEventListener("keydown", (e) => {
     closeBubble();
     return;
   }
-  if (!currentHighlightId) removeTooltip();
+  if (!currentHighlightId && !e.shiftKey) removeTooltip();
+});
+
+document.addEventListener("keyup", () => {
+  if (!tooltip) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || !sel.toString().trim()) removeTooltip();
 });
 
 // ── Click on highlight to re-open bubble ──────────────────────────
