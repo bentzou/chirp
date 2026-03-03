@@ -95,7 +95,12 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("keyup", () => {
   if (!tooltip) return;
   const sel = window.getSelection();
-  if (!sel || sel.isCollapsed || !sel.toString().trim()) removeTooltip();
+  if (!sel || sel.isCollapsed || !sel.toString().trim()) {
+    removeTooltip();
+  } else {
+    // Update action with current selection (user may have extended it with Shift+Arrow)
+    showTooltip(0, 0, sel);
+  }
 });
 
 // ── Click on highlight to re-open bubble ──────────────────────────
