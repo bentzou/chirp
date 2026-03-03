@@ -282,6 +282,7 @@ function stopStreaming() {
 
 function sendMessage(highlightId, selText, userText, messagesArea, { hidden = false, sendBtn } = {}) {
   if (!contextValid()) return;
+  if (!sendBtn && bubbleShadow) sendBtn = bubbleShadow.querySelector(".chirp-send");
   const isPageChat = highlightId === PAGE_CHAT_ID;
 
   function doSend(chatMessages, hl) {
