@@ -193,6 +193,8 @@ button#save:hover {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-height: 460px;
+  overflow-y: auto;
 }
 
 .annotations-empty {
@@ -226,7 +228,7 @@ button#save:hover {
 
 .annotation-text {
   flex: 1;
-  font-size: 13px;
+  font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -246,6 +248,10 @@ button#save:hover {
 
 .annotation-delete:hover {
   color: #ef4444;
+}
+
+.annotation-item.active {
+  background: #fef3c7;
 }
 
 /* ── Settings link ──────────────────────────────────────────────── */

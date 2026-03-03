@@ -128,8 +128,11 @@ saveBtn.addEventListener("click", () => {
 // ── Annotations ───────────────────────────────────────────────────
 
 const annotationsList = document.getElementById("annotations-list");
+let selectedHighlightId = null;
 
 function loadAnnotations() {
+  selectedHighlightId = null;
+
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs[0]) return;
     const url = tabs[0].url;
@@ -146,10 +149,9 @@ function loadAnnotations() {
         return;
       }
 
-      for (const hl of highlights) {
+      for (const hl of highlights.slice(0, 20)) {
         const item = document.createElement("div");
         item.className = "annotation-item";
-
         const colorDot = document.createElement("span");
         colorDot.className = "annotation-color";
         colorDot.style.background = COLOR_SOLIDS[hl.color || "amber"] || COLOR_SOLIDS.amber;
@@ -164,9 +166,13 @@ function loadAnnotations() {
         deleteBtn.textContent = "\u00d7";
         deleteBtn.title = "Delete highlight";
 
-        // Click annotation to scroll to it
+        // Click annotation to scroll to it and open its chat bubble
         item.addEventListener("click", (e) => {
           if (e.target === deleteBtn) return;
+          for (const el of annotationsList.querySelectorAll(".annotation-item")) {
+            el.classList.toggle("active", el === item);
+          }
+          selectedHighlightId = hl.id;
           chrome.tabs.sendMessage(tabId, { type: "scrollToHighlight", id: hl.id });
         });
 
