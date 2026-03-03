@@ -115,9 +115,7 @@ document.addEventListener("click", (e) => {
   // If bubble is already open for this highlight, do nothing
   if (currentHighlightId === id) return;
 
-  // Show tooltip near the clicked highlight
-  const rect = hlEl.getBoundingClientRect();
-  showTooltip(rect.left + window.scrollX - 14, rect.top + window.scrollY - 40);
+  removeTooltip();
 
   if (!contextValid()) return;
   chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {

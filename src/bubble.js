@@ -174,11 +174,29 @@ function openBubble(highlightId, selText, messages) {
 
 function closeBubble() {
   stopStreaming();
+  const closingId = currentHighlightId;
   if (!bubbleShadow) return;
   const existing = bubbleShadow.querySelector(".chirp-bubble");
   if (existing) existing.remove();
   currentHighlightId = null;
   removeTooltip();
+
+  // If closing a highlight with no assistant replies, remove it entirely
+  if (closingId && closingId !== PAGE_CHAT_ID && contextValid()) {
+    chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
+      const hl = highlights?.find((h) => h.id === closingId);
+      if (hl && !hl.messages?.some((m) => m.role === "assistant")) {
+        chrome.runtime.sendMessage({ type: "deleteHighlight", url: location.href, id: closingId });
+        const els = document.querySelectorAll(`chirp-hl[data-id="${closingId}"]`);
+        for (const el of els) {
+          const parent = el.parentNode;
+          while (el.firstChild) parent.insertBefore(el.firstChild, el);
+          parent.removeChild(el);
+          parent.normalize();
+        }
+      }
+    });
+  }
 }
 
 function openPageChat() {
