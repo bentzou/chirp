@@ -204,5 +204,15 @@ document.getElementById("open-welcome").addEventListener("click", (e) => {
   chrome.tabs.create({ url: "welcome.html" });
 });
 
+// ── Page chat button ─────────────────────────────────────────────
+
+document.getElementById("page-chat-btn").addEventListener("click", async () => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab?.id) {
+    chrome.runtime.sendMessage({ type: "openPageChatRelay", tabId: tab.id });
+  }
+  window.close();
+});
+
 // Load annotations on popup open
 loadAnnotations();

@@ -311,6 +311,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 
+  if (msg.type === "openPageChatRelay") {
+    chrome.tabs.sendMessage(msg.tabId, { type: "openPageChat" }).catch(() => {});
+    return;
+  }
+
   if (msg.type === "deleteHighlight") {
     getHighlights(msg.url).then((highlights) => {
       const filtered = highlights.filter((h) => h.id !== msg.id);
@@ -332,26 +337,3 @@ chrome.commands.onCommand.addListener((command) => {
   }
 });
 
-// ── Toolbar button: single-click → popup, double-click → page chat ──
-
-let clickTimer = null;
-
-chrome.action.onClicked.addListener((tab) => {
-  if (clickTimer) {
-    // Second click within window → double-click
-    clearTimeout(clickTimer);
-    clickTimer = null;
-    chrome.tabs.sendMessage(tab.id, { type: "openPageChat" }).catch(() => {
-      // Content script not available (e.g. chrome:// pages) — silently ignore
-    });
-  } else {
-    // First click → start timer
-    clickTimer = setTimeout(async () => {
-      clickTimer = null;
-      await chrome.action.setPopup({ popup: "popup.html" });
-      chrome.action.openPopup();
-      // Clear popup after it opens so onClicked keeps firing
-      setTimeout(() => chrome.action.setPopup({ popup: "" }), 500);
-    }, 300);
-  }
-});

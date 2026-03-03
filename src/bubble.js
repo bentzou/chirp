@@ -3,6 +3,8 @@
 const SEND_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>';
 const STOP_ICON = '<svg class="chirp-spin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10"/></svg>';
 
+let bubbleStylesReady = false;
+
 function ensureBubbleHost() {
   if (bubbleHost) return;
   bubbleHost = document.createElement("chirp-bubble-host");
@@ -13,6 +15,7 @@ function ensureBubbleHost() {
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = chrome.runtime.getURL("bubble.css");
+  link.addEventListener("load", () => { bubbleStylesReady = true; });
   bubbleShadow.appendChild(link);
 
   document.body.appendChild(bubbleHost);
@@ -20,6 +23,15 @@ function ensureBubbleHost() {
 
 function openBubble(highlightId, selText, messages) {
   ensureBubbleHost();
+
+  // Defer until stylesheet is loaded to prevent FOUC
+  if (!bubbleStylesReady) {
+    bubbleShadow.querySelector("link").addEventListener("load", () => {
+      openBubble(highlightId, selText, messages);
+    }, { once: true });
+    return;
+  }
+
   currentHighlightId = highlightId;
 
   // Clear previous bubble content (keep <link>)
