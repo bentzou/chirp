@@ -20,6 +20,8 @@ var bubbleShadow = null;
 var currentHighlightId = null;
 var tooltip = null;
 var tooltipAction = null;
+var activePort = null;
+var activeStreamStop = null;
 
 // ── Enabled state ────────────────────────────────────────────────
 

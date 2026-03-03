@@ -167,6 +167,12 @@ function extractDelta(provider, parsed) {
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name !== "chirp-chat") return;
 
+  let abortController = null;
+
+  port.onDisconnect.addListener(() => {
+    if (abortController) abortController.abort();
+  });
+
   port.onMessage.addListener(async (msg) => {
     if (msg.type !== "chat") return;
 
@@ -224,12 +230,14 @@ chrome.runtime.onConnect.addListener((port) => {
     }
 
     const req = buildRequest(settings, systemPrompt, msg.messages);
+    abortController = new AbortController();
 
     try {
       const resp = await fetch(req.url, {
         method: "POST",
         headers: req.headers,
         body: JSON.stringify(req.body),
+        signal: abortController.signal,
       });
 
       if (!resp.ok) {
@@ -273,6 +281,7 @@ chrome.runtime.onConnect.addListener((port) => {
 
       port.postMessage({ type: "done" });
     } catch (err) {
+      if (err.name === "AbortError") return; // User closed bubble — expected
       port.postMessage({ type: "error", error: err.message });
     }
   });

@@ -82,7 +82,11 @@ document.addEventListener("mousedown", (e) => {
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && currentHighlightId) {
-    closeBubble();
+    if (activeStreamStop) {
+      stopStreaming();
+    } else {
+      closeBubble();
+    }
     return;
   }
   if (!currentHighlightId && !e.shiftKey) removeTooltip();

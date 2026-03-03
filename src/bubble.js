@@ -1,5 +1,8 @@
 // ── Bubble Chat UI (Shadow DOM) ───────────────────────────────────
 
+const SEND_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>';
+const STOP_ICON = '<svg class="chirp-spin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10"/></svg>';
+
 function ensureBubbleHost() {
   if (bubbleHost) return;
   bubbleHost = document.createElement("chirp-bubble-host");
@@ -34,14 +37,6 @@ function openBubble(highlightId, selText, messages) {
   logo.className = "chirp-logo";
   logo.src = chrome.runtime.getURL("icons/icon48.png");
   logo.alt = "";
-
-  const brand = document.createElement("span");
-  brand.className = "chirp-brand";
-  brand.textContent = "Chirp";
-
-  const sep = document.createElement("span");
-  sep.className = "chirp-sep";
-  sep.textContent = "|";
 
   const title = document.createElement("span");
   title.className = "chirp-title";
@@ -93,8 +88,6 @@ function openBubble(highlightId, selText, messages) {
   });
 
   header.appendChild(logo);
-  header.appendChild(brand);
-  header.appendChild(sep);
   header.appendChild(title);
   header.appendChild(minBtn);
   header.appendChild(expandBtn);
@@ -116,7 +109,7 @@ function openBubble(highlightId, selText, messages) {
 
   const input = document.createElement("textarea");
   input.className = "chirp-input";
-  input.rows = 1;
+  input.rows = 2;
   input.placeholder = "Ask about this text...";
 
   function autoResize() {
@@ -128,21 +121,31 @@ function openBubble(highlightId, selText, messages) {
 
   const sendBtn = document.createElement("button");
   sendBtn.className = "chirp-send";
-  sendBtn.textContent = "Send";
+  sendBtn.innerHTML = SEND_ICON;
 
   function handleSend() {
     const text = input.value.trim();
     if (!text) return;
     input.value = "";
     autoResize();
-    sendMessage(highlightId, selText, text, messagesArea);
+    sendMessage(highlightId, selText, text, messagesArea, { sendBtn });
   }
 
-  sendBtn.addEventListener("click", handleSend);
+  sendBtn.addEventListener("click", () => {
+    if (sendBtn.classList.contains("chirp-stop")) {
+      stopStreaming();
+    } else {
+      handleSend();
+    }
+  });
   input.addEventListener("keydown", (e) => {
     e.stopPropagation();
     if (e.key === "Escape") {
-      closeBubble();
+      if (activeStreamStop) {
+        stopStreaming();
+      } else {
+        closeBubble();
+      }
       return;
     }
     if (e.key === "Enter" && !e.shiftKey) {
@@ -151,19 +154,26 @@ function openBubble(highlightId, selText, messages) {
     }
   });
 
-  inputBar.appendChild(input);
-  inputBar.appendChild(sendBtn);
+  const inputWrap = document.createElement("div");
+  inputWrap.className = "chirp-input-wrap";
+  inputWrap.appendChild(input);
+  inputWrap.appendChild(sendBtn);
+  inputBar.appendChild(inputWrap);
 
   bubble.appendChild(header);
   bubble.appendChild(messagesArea);
   bubble.appendChild(inputBar);
   bubbleShadow.appendChild(bubble);
 
-  // Focus input
-  setTimeout(() => input.focus(), 50);
+  // Scroll messages to bottom and focus input
+  setTimeout(() => {
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+    input.focus();
+  }, 50);
 }
 
 function closeBubble() {
+  stopStreaming();
   if (!bubbleShadow) return;
   const existing = bubbleShadow.querySelector(".chirp-bubble");
   if (existing) existing.remove();
@@ -266,7 +276,11 @@ function renderSetupForm(container, highlightId, selText, messagesArea, code) {
 
 // ── Chat messaging ────────────────────────────────────────────────
 
-function sendMessage(highlightId, selText, userText, messagesArea, { hidden = false } = {}) {
+function stopStreaming() {
+  if (activeStreamStop) activeStreamStop();
+}
+
+function sendMessage(highlightId, selText, userText, messagesArea, { hidden = false, sendBtn } = {}) {
   if (!contextValid()) return;
   const isPageChat = highlightId === PAGE_CHAT_ID;
 
@@ -279,7 +293,60 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
     assistantDiv.classList.add("chirp-msg-loading");
 
     // Open port for streaming
+    if (activeStreamStop) activeStreamStop();
     const port = chrome.runtime.connect({ name: "chirp-chat" });
+    activePort = port;
+    let assistantText = "";
+    let finished = false;
+
+    if (sendBtn) {
+      sendBtn.innerHTML = STOP_ICON;
+      sendBtn.classList.add("chirp-stop");
+    }
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      port.disconnect();
+      if (activePort === port) activePort = null;
+      if (activeStreamStop === stop) activeStreamStop = null;
+      if (sendBtn) {
+        sendBtn.innerHTML = SEND_ICON;
+        sendBtn.classList.remove("chirp-stop");
+      }
+    }
+
+    function persistText() {
+      if (assistantText) {
+        chatMessages.push({ role: "assistant", content: assistantText });
+      }
+      if (!isPageChat && hl && assistantText) {
+        hl.messages = chatMessages;
+        chrome.runtime.sendMessage({
+          type: "updateHighlight",
+          url: location.href,
+          highlight: hl,
+        });
+      }
+    }
+
+    function stop() {
+      if (!assistantText) {
+        assistantDiv.remove();
+        finish();
+        return;
+      }
+      assistantDiv.classList.remove("chirp-msg-loading");
+      persistText();
+      finish();
+    }
+
+    activeStreamStop = stop;
+
+    // Handle background-initiated disconnect (e.g. service worker restart)
+    port.onDisconnect.addListener(() => {
+      if (!finished) stop();
+    });
 
     port.postMessage({
       type: "chat",
@@ -289,8 +356,6 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
       messages: chatMessages.map(({ role, content }) => ({ role, content })),
     });
 
-    let assistantText = "";
-
     port.onMessage.addListener((msg) => {
       if (msg.type === "delta") {
         assistantDiv.classList.remove("chirp-msg-loading");
@@ -298,20 +363,9 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
         assistantDiv.innerHTML = renderMarkdown(assistantText);
         messagesArea.scrollTop = messagesArea.scrollHeight;
       } else if (msg.type === "done") {
-        if (assistantText) {
-          chatMessages.push({ role: "assistant", content: assistantText });
-          assistantDiv.innerHTML = renderMarkdown(assistantText);
-        }
-        // Persist updated messages (highlight chat only)
-        if (!isPageChat && hl) {
-          hl.messages = chatMessages;
-          chrome.runtime.sendMessage({
-            type: "updateHighlight",
-            url: location.href,
-            highlight: hl,
-          });
-        }
-        port.disconnect();
+        assistantDiv.innerHTML = assistantText ? renderMarkdown(assistantText) : "";
+        persistText();
+        finish();
       } else if (msg.type === "error") {
         assistantDiv.classList.remove("chirp-msg-loading");
         if (msg.code === "NO_API_KEY" || msg.code === "INVALID_API_KEY") {
@@ -320,7 +374,7 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
           assistantDiv.textContent = "Error: " + msg.error;
         }
         assistantDiv.classList.add("chirp-msg-error");
-        port.disconnect();
+        finish();
       }
     });
   }
