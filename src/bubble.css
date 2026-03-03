@@ -17,7 +17,6 @@
   color-scheme: light;
   z-index: 2147483647;
   overflow: hidden;
-  resize: both;
   min-width: 280px;
   min-height: 200px;
 }
@@ -118,6 +117,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  border-top: 1px solid #e5e7eb;
 }
 
 .chirp-msg {
@@ -305,19 +305,28 @@
 
 /* Input bar */
 .chirp-input-bar {
-  display: flex;
-  align-items: flex-end;
   padding: 10px 12px;
   border-top: 1px solid #e5e7eb;
-  gap: 8px;
   flex-shrink: 0;
 }
 
-.chirp-input {
-  flex: 1;
-  padding: 8px 12px;
+.chirp-input-wrap {
+  position: relative;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.chirp-input-wrap:focus-within {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.chirp-input {
+  width: 100%;
+  padding: 8px 38px 8px 12px;
+  border: none;
+  border-radius: 10px;
   font-size: 13px;
   outline: none;
   font-family: inherit;
@@ -325,27 +334,46 @@
   overflow-y: auto;
   line-height: 1.4;
   max-height: 120px;
-}
-
-.chirp-input:focus {
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+  box-sizing: border-box;
+  background: transparent;
 }
 
 .chirp-send {
-  padding: 8px 16px;
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
   background: #f59e0b;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 50%;
   cursor: pointer;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
 }
 
 .chirp-send:hover {
   background: #d97706;
+}
+
+.chirp-send.chirp-stop {
+  background: rgba(245, 158, 11, 0.35);
+}
+
+.chirp-send.chirp-stop:hover {
+  background: rgba(245, 158, 11, 0.5);
+}
+
+@keyframes chirp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.chirp-spin {
+  animation: chirp-spin 0.7s linear infinite;
 }
 
 /* Inline setup form */
