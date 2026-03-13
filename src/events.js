@@ -135,7 +135,7 @@ document.addEventListener("mousedown", (e) => {
   const insideBubble = path.some((el) => el === bubbleHost);
   const insideTooltip = tooltip && path.some((el) => el === tooltip);
   const insideHighlight = e.target.closest?.("chirp-hl");
-  if (!insideBubble && !insideTooltip && !insideHighlight) {
+  if (!insideBubble && !insideTooltip && !insideHighlight && !activeStreamStop) {
     closeBubble();
   }
 });

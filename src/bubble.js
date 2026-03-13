@@ -21,13 +21,13 @@ function ensureBubbleHost() {
   document.body.appendChild(bubbleHost);
 }
 
-function openBubble(highlightId, selText, messages) {
+function openBubble(highlightId, selText, messages, onReady) {
   ensureBubbleHost();
 
   // Defer until stylesheet is loaded to prevent FOUC
   if (!bubbleStylesReady) {
     bubbleShadow.querySelector("link").addEventListener("load", () => {
-      openBubble(highlightId, selText, messages);
+      openBubble(highlightId, selText, messages, onReady);
     }, { once: true });
     return;
   }
@@ -176,6 +176,7 @@ function openBubble(highlightId, selText, messages) {
   bubble.appendChild(messagesArea);
   bubble.appendChild(inputBar);
   bubbleShadow.appendChild(bubble);
+  if (onReady) onReady(messagesArea);
 
   // Scroll messages to bottom and focus input
   setTimeout(() => {

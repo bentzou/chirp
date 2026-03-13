@@ -71,29 +71,22 @@ function highlightRange(range, selText) {
 
   if (!contextValid()) return;
 
-  // Open bubble immediately
-  openBubble(id, selText, []);
-
-  // Persist to storage first, then send automatic message
-  if (startXPath && endXPath) {
-    chrome.runtime.sendMessage({
-      type: "saveHighlight",
-      url: location.href,
-      highlight: serialized,
-    }, (response) => {
-      // After highlight is saved, send the automatic message
-      const messagesArea = bubbleShadow?.querySelector(".chirp-messages");
-      if (messagesArea && response?.ok) {
-        sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
-      }
-    });
-  } else {
-    // If no XPath, still send message but it won't persist (edge case)
-    const messagesArea = bubbleShadow?.querySelector(".chirp-messages");
-    if (messagesArea) {
+  // Open bubble with onReady callback to guarantee DOM exists before sending
+  openBubble(id, selText, [], (messagesArea) => {
+    if (startXPath && endXPath) {
+      chrome.runtime.sendMessage({
+        type: "saveHighlight",
+        url: location.href,
+        highlight: serialized,
+      }, (response) => {
+        if (response?.ok) {
+          sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
+        }
+      });
+    } else {
       sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
     }
-  }
+  });
 }
 
 // ── Restore highlights on page load ───────────────────────────────
