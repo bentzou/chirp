@@ -137,17 +137,6 @@ document.addEventListener("click", (e) => {
 
 // ── Click-outside dismissal ───────────────────────────────────────
 
-document.addEventListener("mousedown", (e) => {
-  if (!currentHighlightId) return;
-  const path = e.composedPath();
-  // Check if click is inside bubble, tooltip, or a highlight
-  const insideBubble = path.some((el) => el === bubbleHost);
-  const insideTooltip = tooltip && path.some((el) => el === tooltip);
-  const insideHighlight = e.target.closest?.("chirp-hl");
-  if (!insideBubble && !insideTooltip && !insideHighlight && !activeStreamStop) {
-    closeBubble();
-  }
-});
 
 // ── Message listener for popup communication ──────────────────────
 
