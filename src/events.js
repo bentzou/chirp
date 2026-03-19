@@ -80,6 +80,15 @@ document.addEventListener("mousedown", (e) => {
   }
 });
 
+// ── Keyboard shortcut (capture phase to beat site handlers) ────────
+document.addEventListener("keydown", (e) => {
+  if (e.altKey && e.key === "c" && !e.ctrlKey && !e.metaKey && chirpEnabled) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    openPageChat();
+  }
+}, true);
+
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && currentHighlightId) {
     if (activeStreamStop) {

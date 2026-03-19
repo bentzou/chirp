@@ -323,22 +323,29 @@ button#save:hover {
   align-items: center;
   gap: 3px;
   box-sizing: border-box;
-  height: 22px;
+  height: 20px;
   padding: 0 9px;
   border-radius: 10px;
-  background: transparent;
+  background: #f59e0b;
   border: 1.5px solid #f59e0b;
-  color: #f59e0b;
-  font-size: 10px;
+  color: #fff;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s;
 }
 
+.page-chat-btn kbd {
+  font-family: inherit;
+  font-weight: 500;
+  opacity: 0.45;
+  margin-left: 2px;
+}
+
 .page-chat-btn:hover {
-  background: #f59e0b;
-  color: #fff;
+  background: transparent;
+  color: #f59e0b;
 }
 
 .page-chat-btn:active {
