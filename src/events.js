@@ -85,7 +85,18 @@ document.addEventListener("keydown", (e) => {
   if (e.altKey && e.key === "c" && !e.ctrlKey && !e.metaKey && chirpEnabled) {
     e.preventDefault();
     e.stopImmediatePropagation();
-    openPageChat();
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && sel.toString().trim()) {
+      removeTooltip();
+      try {
+        const range = sel.getRangeAt(0).cloneRange();
+        highlightRange(range, sel.toString());
+      } catch (_) {
+        openPageChat();
+      }
+    } else {
+      openPageChat();
+    }
   }
 }, true);
 
@@ -167,7 +178,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.type === "openPageChat") {
-    openPageChat();
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && sel.toString().trim()) {
+      removeTooltip();
+      try {
+        const range = sel.getRangeAt(0).cloneRange();
+        highlightRange(range, sel.toString());
+      } catch (_) {
+        openPageChat();
+      }
+    } else {
+      openPageChat();
+    }
     sendResponse({ ok: true });
     return;
   }
