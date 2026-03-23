@@ -420,7 +420,14 @@
 }
 
 .chirp-setup-save {
+  position: static;
   width: 100%;
+  height: auto;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 .chirp-setup-save:disabled {
