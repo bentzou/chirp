@@ -4,6 +4,7 @@ const SEND_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12
 const STOP_ICON = '<svg class="chirp-spin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10"/></svg>';
 
 let bubbleStylesReady = false;
+let userAtBottom = true;
 
 function ensureBubbleHost() {
   if (bubbleHost) return;
@@ -109,6 +110,12 @@ function openBubble(highlightId, selText, messages, onReady) {
   const messagesArea = document.createElement("div");
   messagesArea.className = "chirp-messages";
 
+  messagesArea.addEventListener("scroll", () => {
+    const threshold = 40;
+    userAtBottom =
+      messagesArea.scrollHeight - messagesArea.scrollTop - messagesArea.clientHeight < threshold;
+  });
+
   // Render existing messages (skip hidden auto-asks)
   for (const m of messages) {
     if (m.hidden) continue;
@@ -181,6 +188,7 @@ function openBubble(highlightId, selText, messages, onReady) {
   // Scroll messages to bottom and focus input
   setTimeout(() => {
     messagesArea.scrollTop = messagesArea.scrollHeight;
+    userAtBottom = true;
     input.focus();
   }, 50);
 }
@@ -240,7 +248,7 @@ function appendMessage(container, role, content) {
     div.innerHTML = renderMarkdown(content);
   }
   container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
+  if (userAtBottom) container.scrollTop = container.scrollHeight;
   return div;
 }
 
@@ -318,6 +326,7 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
 
   function doSend(chatMessages, hl) {
     chatMessages.push({ role: "user", content: userText, hidden: hidden || undefined });
+    userAtBottom = true;
     if (!hidden) appendMessage(messagesArea, "user", userText);
 
     // Create assistant message placeholder with loading dots
@@ -393,7 +402,7 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
         assistantDiv.classList.remove("chirp-msg-loading");
         assistantText += msg.text;
         assistantDiv.innerHTML = renderMarkdown(assistantText);
-        messagesArea.scrollTop = messagesArea.scrollHeight;
+        if (userAtBottom) messagesArea.scrollTop = messagesArea.scrollHeight;
       } else if (msg.type === "done") {
         assistantDiv.innerHTML = assistantText ? renderMarkdown(assistantText) : "";
         persistText();
