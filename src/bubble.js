@@ -10,7 +10,8 @@ function initResize(bubble) {
   const MIN_W = 280;
   const MIN_H = 200;
 
-  function startResize(e, resizeW, resizeH) {
+  // dirW/dirH: +1 = dragging grows toward positive screen coords, -1 = opposite
+  function startResize(e, dirW, dirH) {
     e.preventDefault();
     e.stopPropagation();
     const startX = e.clientX;
@@ -19,12 +20,12 @@ function initResize(bubble) {
     const startH = bubble.offsetHeight;
 
     function onMove(ev) {
-      if (resizeW) {
-        const w = Math.max(MIN_W, startW - (ev.clientX - startX));
+      if (dirW) {
+        const w = Math.max(MIN_W, startW + dirW * (ev.clientX - startX));
         bubble.style.width = w + "px";
       }
-      if (resizeH) {
-        const h = Math.max(MIN_H, startH - (ev.clientY - startY));
+      if (dirH) {
+        const h = Math.max(MIN_H, startH + dirH * (ev.clientY - startY));
         bubble.style.maxHeight = "none";
         bubble.style.height = h + "px";
       }
@@ -39,9 +40,129 @@ function initResize(bubble) {
     document.addEventListener("mouseup", onUp);
   }
 
-  bubble.querySelector(".chirp-resize-left").addEventListener("mousedown", (e) => startResize(e, true, false));
-  bubble.querySelector(".chirp-resize-top").addEventListener("mousedown", (e) => startResize(e, false, true));
-  bubble.querySelector(".chirp-resize-corner").addEventListener("mousedown", (e) => startResize(e, true, true));
+  // Left edge: dragging left grows width (dir = -1)
+  bubble.querySelector(".chirp-resize-left").addEventListener("mousedown", (e) => startResize(e, -1, 0));
+  // Right edge: dragging right grows width (dir = +1)
+  bubble.querySelector(".chirp-resize-right").addEventListener("mousedown", (e) => startResize(e, +1, 0));
+  // Top edge: dragging up grows height (dir = -1)
+  bubble.querySelector(".chirp-resize-top").addEventListener("mousedown", (e) => startResize(e, 0, -1));
+  // Bottom edge: dragging down grows height (dir = +1)
+  bubble.querySelector(".chirp-resize-bottom").addEventListener("mousedown", (e) => startResize(e, 0, +1));
+}
+
+function initDrag(bubble, header) {
+  const DEAD_ZONE = 5;
+  const SNAP_THRESHOLD = 60;
+  const GAP = 20;
+  let didDrag = false;
+
+  header.addEventListener("mousedown", (e) => {
+    if (e.target.closest("button")) return;
+    if (bubble.classList.contains("chirp-expanded")) return;
+
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const rect = bubble.getBoundingClientRect();
+    let dragging = false;
+    didDrag = false;
+
+    function onMove(ev) {
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+
+      if (!dragging) {
+        if (Math.abs(dx) < DEAD_ZONE && Math.abs(dy) < DEAD_ZONE) return;
+        dragging = true;
+        didDrag = true;
+        bubble.classList.add("chirp-dragging");
+        // Switch to top/left positioning for free movement
+        bubble.style.top = rect.top + "px";
+        bubble.style.left = rect.left + "px";
+        bubble.style.bottom = "auto";
+        bubble.style.right = "auto";
+      }
+
+      bubble.style.top = (rect.top + dy) + "px";
+      bubble.style.left = (rect.left + dx) + "px";
+    }
+
+    function onUp() {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+
+      if (!dragging) return; // click — let the click handler fire
+
+      bubble.classList.remove("chirp-dragging");
+      snapToEdges(bubble);
+    }
+
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  });
+
+  // Suppress click (minimize) when a drag occurred
+  header.addEventListener("click", (e) => {
+    if (didDrag) {
+      e.stopImmediatePropagation();
+      didDrag = false;
+    }
+  }, true); // capture phase to fire before the existing click handler
+
+  function snapToEdges(el) {
+    const r = el.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Determine closest horizontal edge
+    const distLeft = r.left;
+    const distRight = vw - r.right;
+    const useLeft = distLeft <= distRight;
+
+    // Determine closest vertical edge
+    const distTop = r.top;
+    const distBottom = vh - r.bottom;
+    const useTop = distTop <= distBottom;
+
+    // Compute snapped position
+    const snapLeft = useLeft
+      ? (distLeft < SNAP_THRESHOLD ? GAP : r.left)
+      : null;
+    const snapRight = !useLeft
+      ? (distRight < SNAP_THRESHOLD ? GAP : vw - r.right)
+      : null;
+    const snapTop = useTop
+      ? (distTop < SNAP_THRESHOLD ? GAP : r.top)
+      : null;
+    const snapBottom = !useTop
+      ? (distBottom < SNAP_THRESHOLD ? GAP : vh - r.bottom)
+      : null;
+
+    // Apply snap with transition
+    el.classList.add("chirp-snapping");
+
+    if (useLeft) {
+      el.style.left = snapLeft + "px";
+      el.style.right = "auto";
+    } else {
+      el.style.right = snapRight + "px";
+      el.style.left = "auto";
+    }
+    if (useTop) {
+      el.style.top = snapTop + "px";
+      el.style.bottom = "auto";
+    } else {
+      el.style.bottom = snapBottom + "px";
+      el.style.top = "auto";
+    }
+
+    el.addEventListener("transitionend", () => {
+      el.classList.remove("chirp-snapping");
+    }, { once: true });
+
+    // Fallback removal if no transition fires
+    setTimeout(() => el.classList.remove("chirp-snapping"), 200);
+  }
 }
 
 function ensureBubbleHost() {
@@ -80,8 +201,8 @@ function openBubble(highlightId, selText, messages, onReady) {
   const bubble = document.createElement("div");
   bubble.className = "chirp-bubble";
 
-  // Resize handles (top-left since bubble is anchored bottom-right)
-  for (const cls of ["chirp-resize-left", "chirp-resize-top", "chirp-resize-corner"]) {
+  // Resize handles on all four edges
+  for (const cls of ["chirp-resize-left", "chirp-resize-right", "chirp-resize-top", "chirp-resize-bottom"]) {
     const handle = document.createElement("div");
     handle.className = cls;
     bubble.appendChild(handle);
@@ -119,6 +240,10 @@ function openBubble(highlightId, selText, messages, onReady) {
       bubble.style.width = "";
       bubble.style.height = "";
       bubble.style.maxHeight = "";
+      bubble.style.top = "";
+      bubble.style.left = "";
+      bubble.style.bottom = "";
+      bubble.style.right = "";
     }
     // else: back to normal (both removed)
   }
@@ -149,6 +274,8 @@ function openBubble(highlightId, selText, messages, onReady) {
     setBubbleState("minimized");
   });
 
+  initDrag(bubble, header);
+
   header.appendChild(logo);
   header.appendChild(title);
   header.appendChild(minBtn);
@@ -169,6 +296,16 @@ function openBubble(highlightId, selText, messages, onReady) {
   for (const m of messages) {
     if (m.hidden) continue;
     appendMessage(messagesArea, m.role, m.content);
+  }
+
+  // Empty state when no visible messages
+  if (!messages.some(m => !m.hidden)) {
+    const empty = document.createElement("div");
+    empty.className = "chirp-empty";
+    empty.textContent = highlightId === PAGE_CHAT_ID
+      ? "Ask a question about the page\u2026"
+      : "Ask a question about this text\u2026";
+    messagesArea.appendChild(empty);
   }
 
   // Input bar
@@ -291,6 +428,9 @@ function openPageChat() {
 }
 
 function appendMessage(container, role, content) {
+  const empty = container.querySelector(".chirp-empty");
+  if (empty) empty.remove();
+
   const div = document.createElement("div");
   div.className = "chirp-msg chirp-msg-" + role;
   if (content) {

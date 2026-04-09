@@ -22,36 +22,37 @@
   animation: chirp-fade-in 0.15s ease-out;
 }
 
-/* Resize handles */
+/* Resize handles — edges + corners */
 .chirp-resize-left,
+.chirp-resize-right,
 .chirp-resize-top,
-.chirp-resize-corner {
+.chirp-resize-bottom {
   position: absolute;
   z-index: 1;
 }
 
 .chirp-resize-left {
-  left: 0;
-  top: 0;
-  bottom: 0;
+  left: 0; top: 0; bottom: 0;
+  width: 6px;
+  cursor: ew-resize;
+}
+
+.chirp-resize-right {
+  right: 0; top: 0; bottom: 0;
   width: 6px;
   cursor: ew-resize;
 }
 
 .chirp-resize-top {
-  left: 0;
-  right: 0;
-  top: 0;
+  left: 0; right: 0; top: 0;
   height: 6px;
   cursor: ns-resize;
 }
 
-.chirp-resize-corner {
-  left: 0;
-  top: 0;
-  width: 12px;
-  height: 12px;
-  cursor: nwse-resize;
+.chirp-resize-bottom {
+  left: 0; right: 0; bottom: 0;
+  height: 6px;
+  cursor: ns-resize;
 }
 
 @keyframes chirp-fade-in {
@@ -69,7 +70,7 @@
   color: #fff;
   flex-shrink: 0;
   min-width: 0;
-  cursor: pointer;
+  cursor: grab;
   user-select: none;
 }
 
@@ -136,14 +137,25 @@
 }
 
 .chirp-minimized .chirp-resize-left,
+.chirp-minimized .chirp-resize-right,
 .chirp-minimized .chirp-resize-top,
-.chirp-minimized .chirp-resize-corner {
+.chirp-minimized .chirp-resize-bottom {
   display: none;
 }
 
 .chirp-minimized .chirp-messages,
 .chirp-minimized .chirp-input-bar {
   display: none;
+}
+
+/* Snap transition after drag release */
+.chirp-snapping {
+  transition: top 0.15s ease-out, left 0.15s ease-out, bottom 0.15s ease-out, right 0.15s ease-out;
+}
+
+/* Dragging state */
+.chirp-dragging .chirp-header {
+  cursor: grabbing;
 }
 
 /* Expanded state */
@@ -345,6 +357,16 @@
 .chirp-msg-assistant th {
   background: #f3f4f6;
   font-weight: 600;
+}
+
+/* Empty state */
+.chirp-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 13px;
 }
 
 /* Input bar */
