@@ -22,6 +22,38 @@
   animation: chirp-fade-in 0.15s ease-out;
 }
 
+/* Resize handles */
+.chirp-resize-left,
+.chirp-resize-top,
+.chirp-resize-corner {
+  position: absolute;
+  z-index: 1;
+}
+
+.chirp-resize-left {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: ew-resize;
+}
+
+.chirp-resize-top {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 6px;
+  cursor: ns-resize;
+}
+
+.chirp-resize-corner {
+  left: 0;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  cursor: nwse-resize;
+}
+
 @keyframes chirp-fade-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -96,11 +128,17 @@
   opacity: 1;
 }
 
-/* Minimized state */
+/* Minimized state — hide resize handles */
 .chirp-minimized {
   max-height: none;
   min-height: 0;
   resize: none;
+}
+
+.chirp-minimized .chirp-resize-left,
+.chirp-minimized .chirp-resize-top,
+.chirp-minimized .chirp-resize-corner {
+  display: none;
 }
 
 .chirp-minimized .chirp-messages,

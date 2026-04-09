@@ -6,6 +6,44 @@ const STOP_ICON = '<svg class="chirp-spin" xmlns="http://www.w3.org/2000/svg" wi
 let bubbleStylesReady = false;
 let userAtBottom = true;
 
+function initResize(bubble) {
+  const MIN_W = 280;
+  const MIN_H = 200;
+
+  function startResize(e, resizeW, resizeH) {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startW = bubble.offsetWidth;
+    const startH = bubble.offsetHeight;
+
+    function onMove(ev) {
+      if (resizeW) {
+        const w = Math.max(MIN_W, startW - (ev.clientX - startX));
+        bubble.style.width = w + "px";
+      }
+      if (resizeH) {
+        const h = Math.max(MIN_H, startH - (ev.clientY - startY));
+        bubble.style.maxHeight = "none";
+        bubble.style.height = h + "px";
+      }
+    }
+
+    function onUp() {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    }
+
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }
+
+  bubble.querySelector(".chirp-resize-left").addEventListener("mousedown", (e) => startResize(e, true, false));
+  bubble.querySelector(".chirp-resize-top").addEventListener("mousedown", (e) => startResize(e, false, true));
+  bubble.querySelector(".chirp-resize-corner").addEventListener("mousedown", (e) => startResize(e, true, true));
+}
+
 function ensureBubbleHost() {
   if (bubbleHost) return;
   bubbleHost = document.createElement("chirp-bubble-host");
@@ -42,6 +80,14 @@ function openBubble(highlightId, selText, messages, onReady) {
   const bubble = document.createElement("div");
   bubble.className = "chirp-bubble";
 
+  // Resize handles (top-left since bubble is anchored bottom-right)
+  for (const cls of ["chirp-resize-left", "chirp-resize-top", "chirp-resize-corner"]) {
+    const handle = document.createElement("div");
+    handle.className = cls;
+    bubble.appendChild(handle);
+  }
+  initResize(bubble);
+
   // Header
   const header = document.createElement("div");
   header.className = "chirp-header";
@@ -70,6 +116,9 @@ function openBubble(highlightId, selText, messages, onReady) {
       removeTooltip();
     } else if (state === "expanded" && !isExpanded) {
       bubble.classList.add("chirp-expanded");
+      bubble.style.width = "";
+      bubble.style.height = "";
+      bubble.style.maxHeight = "";
     }
     // else: back to normal (both removed)
   }
