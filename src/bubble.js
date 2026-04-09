@@ -304,7 +304,7 @@ function openBubble(highlightId, selText, messages, onReady) {
       const empty = document.createElement("div");
       empty.className = "chirp-empty";
       empty.textContent = isPageChat
-        ? "Ask a question about the page\u2026"
+        ? "Chirp!"
         : "Ask a question about this text\u2026";
       messagesArea.appendChild(empty);
     });
@@ -380,7 +380,7 @@ function openBubble(highlightId, selText, messages, onReady) {
     const empty = document.createElement("div");
     empty.className = "chirp-empty";
     empty.textContent = highlightId === PAGE_CHAT_ID
-      ? "Ask a question about the page\u2026"
+      ? "Chirp!"
       : "Ask a question about this text\u2026";
     messagesArea.appendChild(empty);
   }
