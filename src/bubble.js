@@ -296,7 +296,10 @@ function openBubble(highlightId, selText, messages, onReady) {
       e.stopPropagation();
       closeMenu();
       const isPageChat = highlightId === PAGE_CHAT_ID;
-      if (isPageChat) pageChatMessages.length = 0;
+      if (isPageChat) {
+        pageChatMessages.length = 0;
+        chrome.runtime.sendMessage({ type: "savePageChat", url: location.href, messages: [] });
+      }
       while (messagesArea.firstChild) messagesArea.firstChild.remove();
       const empty = document.createElement("div");
       empty.className = "chirp-empty";
@@ -494,12 +497,16 @@ function openPageChat() {
     }
   }
   closeBubble();
-  openBubble(PAGE_CHAT_ID, "Page Chat", pageChatMessages);
-  // Set placeholder for page chat
-  if (bubbleShadow) {
-    const input = bubbleShadow.querySelector(".chirp-input");
-    if (input) input.placeholder = "Ask about this page...";
-  }
+  if (!contextValid()) return;
+  chrome.runtime.sendMessage({ type: "getPageChat", url: location.href }, (stored) => {
+    pageChatMessages.length = 0;
+    if (stored?.length) pageChatMessages.push(...stored);
+    openBubble(PAGE_CHAT_ID, "Page Chat", pageChatMessages);
+    if (bubbleShadow) {
+      const input = bubbleShadow.querySelector(".chirp-input");
+      if (input) input.placeholder = "Ask about this page...";
+    }
+  });
 }
 
 function appendMessage(container, role, content) {
@@ -647,7 +654,13 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
       if (assistantText) {
         chatMessages.push({ role: "assistant", content: assistantText });
       }
-      if (!isPageChat && hl && assistantText) {
+      if (isPageChat) {
+        chrome.runtime.sendMessage({
+          type: "savePageChat",
+          url: location.href,
+          messages: chatMessages.map(({ role, content }) => ({ role, content })),
+        });
+      } else if (hl && assistantText) {
         hl.messages = chatMessages;
         chrome.runtime.sendMessage({
           type: "updateHighlight",

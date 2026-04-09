@@ -52,6 +52,32 @@ async function saveHighlights(url, highlights) {
   });
 }
 
+// ── Page chat storage helpers ─────────────────────────────────────
+
+function pageChatKeyForUrl(url) {
+  try {
+    const u = new URL(url);
+    u.hash = "";
+    return "pc:" + u.href;
+  } catch {
+    return "pc:" + url;
+  }
+}
+
+async function getPageChat(url) {
+  const key = pageChatKeyForUrl(url);
+  return new Promise((resolve) => {
+    chrome.storage.local.get([key], (data) => resolve(data[key] || []));
+  });
+}
+
+async function savePageChat(url, messages) {
+  const key = pageChatKeyForUrl(url);
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ [key]: messages }, resolve);
+  });
+}
+
 // ── AI API helpers ─────────────────────────────────────────────────
 
 function buildOpenAIRequest(settings, systemPrompt, messages) {
@@ -308,6 +334,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       if (idx !== -1) highlights[idx] = msg.highlight;
       saveHighlights(msg.url, highlights).then(() => sendResponse({ ok: true }));
     });
+    return true;
+  }
+
+  if (msg.type === "getPageChat") {
+    getPageChat(msg.url).then(sendResponse);
+    return true;
+  }
+
+  if (msg.type === "savePageChat") {
+    savePageChat(msg.url, msg.messages).then(() => sendResponse({ ok: true }));
     return true;
   }
 
