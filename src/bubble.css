@@ -199,6 +199,7 @@
 }
 
 .chirp-msg {
+  position: relative;
   max-width: 85%;
   padding: 8px 12px;
   border-radius: 12px;
@@ -568,4 +569,65 @@
 .chirp-messages::-webkit-scrollbar-thumb {
   background: #d1d5db;
   border-radius: 3px;
+}
+
+/* ── Per-message copy button ────────────────────────────────── */
+
+.chirp-copy-btn {
+  position: absolute;
+  top: 6px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  background: transparent;
+  color: #6b7280;
+  z-index: 1;
+}
+
+.chirp-msg:hover .chirp-copy-btn {
+  opacity: 0.6;
+}
+
+
+.chirp-msg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.chirp-msg-user::after {
+  right: 100%;
+  left: -40px;
+}
+
+.chirp-msg-assistant::after {
+  left: 100%;
+  right: -40px;
+}
+
+.chirp-msg-user .chirp-copy-btn {
+  right: calc(100% + 6px);
+}
+
+.chirp-msg-assistant .chirp-copy-btn {
+  left: calc(100% + 6px);
+}
+
+.chirp-copy-btn.chirp-copied {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.chirp-msg-loading .chirp-copy-btn,
+.chirp-msg-error .chirp-copy-btn {
+  display: none;
 }

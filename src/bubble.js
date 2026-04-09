@@ -2,6 +2,8 @@
 
 const SEND_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>';
 const STOP_ICON = '<svg class="chirp-spin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10"/></svg>';
+const COPY_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+const CHECK_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
 let bubbleStylesReady = false;
 let userAtBottom = true;
@@ -506,9 +508,31 @@ function appendMessage(container, role, content) {
 
   const div = document.createElement("div");
   div.className = "chirp-msg chirp-msg-" + role;
+
+  const contentEl = document.createElement("div");
+  contentEl.className = "chirp-msg-content";
   if (content) {
-    div.innerHTML = renderMarkdown(content);
+    contentEl.innerHTML = renderMarkdown(content);
   }
+  div.appendChild(contentEl);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "chirp-copy-btn";
+  copyBtn.innerHTML = COPY_ICON;
+  copyBtn.title = "Copy message";
+  copyBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(contentEl.textContent.trim()).then(() => {
+      copyBtn.innerHTML = CHECK_ICON;
+      copyBtn.classList.add("chirp-copied");
+      setTimeout(() => {
+        copyBtn.innerHTML = COPY_ICON;
+        copyBtn.classList.remove("chirp-copied");
+      }, 1200);
+    });
+  });
+  div.appendChild(copyBtn);
+
   container.appendChild(div);
   if (userAtBottom) container.scrollTop = container.scrollHeight;
   return div;
@@ -659,14 +683,16 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
       messages: chatMessages.map(({ role, content }) => ({ role, content })),
     });
 
+    const assistantContent = assistantDiv.querySelector(".chirp-msg-content");
+
     port.onMessage.addListener((msg) => {
       if (msg.type === "delta") {
         assistantDiv.classList.remove("chirp-msg-loading");
         assistantText += msg.text;
-        assistantDiv.innerHTML = renderMarkdown(assistantText);
+        assistantContent.innerHTML = renderMarkdown(assistantText);
         if (userAtBottom) messagesArea.scrollTop = messagesArea.scrollHeight;
       } else if (msg.type === "done") {
-        assistantDiv.innerHTML = assistantText ? renderMarkdown(assistantText) : "";
+        assistantContent.innerHTML = assistantText ? renderMarkdown(assistantText) : "";
         persistText();
         finish();
       } else if (msg.type === "error") {
@@ -674,7 +700,7 @@ function sendMessage(highlightId, selText, userText, messagesArea, { hidden = fa
         if (msg.code === "NO_API_KEY" || msg.code === "INVALID_API_KEY") {
           renderSetupForm(assistantDiv, highlightId, selText, messagesArea, msg.code);
         } else {
-          assistantDiv.textContent = "Error: " + msg.error;
+          assistantContent.textContent = "Error: " + msg.error;
         }
         assistantDiv.classList.add("chirp-msg-error");
         finish();
