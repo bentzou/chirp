@@ -271,8 +271,78 @@ function openBubble(highlightId, selText, messages, onReady) {
     closeBubble();
   });
 
+  // Logo menu
+  let menuOpen = false;
+  let menuEl = null;
+
+  function closeMenu() {
+    if (menuEl) { menuEl.remove(); menuEl = null; }
+    menuOpen = false;
+  }
+
+  function openMenu() {
+    if (menuOpen) { closeMenu(); return; }
+    menuOpen = true;
+
+    menuEl = document.createElement("div");
+    menuEl.className = "chirp-menu";
+
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "chirp-menu-action";
+    clearBtn.textContent = "Clear conversation";
+    clearBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeMenu();
+      const isPageChat = highlightId === PAGE_CHAT_ID;
+      if (isPageChat) pageChatMessages.length = 0;
+      while (messagesArea.firstChild) messagesArea.firstChild.remove();
+      const empty = document.createElement("div");
+      empty.className = "chirp-empty";
+      empty.textContent = isPageChat
+        ? "Ask a question about the page\u2026"
+        : "Ask a question about this text\u2026";
+      messagesArea.appendChild(empty);
+    });
+
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "chirp-menu-action";
+    copyBtn.textContent = "Copy conversation";
+    copyBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const msgs = messagesArea.querySelectorAll(".chirp-msg");
+      const lines = [];
+      for (const m of msgs) {
+        const role = m.classList.contains("chirp-msg-user") ? "You" : "Chirp";
+        lines.push(role + ": " + m.textContent.trim());
+      }
+      navigator.clipboard.writeText(lines.join("\n"));
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => { copyBtn.textContent = "Copy conversation"; }, 1200);
+    });
+
+    menuEl.appendChild(clearBtn);
+    menuEl.appendChild(copyBtn);
+
+    bubble.appendChild(menuEl);
+
+    function onOutsideClick(ev) {
+      if (menuEl && !menuEl.contains(ev.target) && ev.target !== logo && !logo.contains(ev.target)) {
+        closeMenu();
+        bubble.removeEventListener("mousedown", onOutsideClick, true);
+      }
+    }
+    bubble.addEventListener("mousedown", onOutsideClick, true);
+  }
+
+  logo.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openMenu();
+  });
+  logo.style.cursor = "pointer";
+
   header.addEventListener("click", (e) => {
-    if (e.target.closest("button")) return;
+    if (e.target.closest("button") || e.target === logo) return;
+    if (menuOpen) { closeMenu(); return; }
     setBubbleState("minimized");
   });
 
@@ -348,6 +418,7 @@ function openBubble(highlightId, selText, messages, onReady) {
   input.addEventListener("keydown", (e) => {
     e.stopPropagation();
     if (e.key === "Escape") {
+      if (menuOpen) { closeMenu(); return; }
       if (activeStreamStop) {
         stopStreaming();
       } else {
