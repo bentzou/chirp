@@ -102,6 +102,11 @@ document.addEventListener("keydown", (e) => {
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && currentHighlightId) {
+    // If the bird menu popover is open, close it first instead of the bubble
+    if (bubbleShadow?.querySelector(".chirp-menu")) {
+      bubbleShadow.querySelector(".chirp-menu").remove();
+      return;
+    }
     if (activeStreamStop) {
       stopStreaming();
     } else {

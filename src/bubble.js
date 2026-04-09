@@ -274,19 +274,15 @@ function openBubble(highlightId, selText, messages, onReady) {
   });
 
   // Logo menu
-  let menuOpen = false;
-  let menuEl = null;
-
   function closeMenu() {
-    if (menuEl) { menuEl.remove(); menuEl = null; }
-    menuOpen = false;
+    const m = bubble.querySelector(".chirp-menu");
+    if (m) m.remove();
   }
 
   function openMenu() {
-    if (menuOpen) { closeMenu(); return; }
-    menuOpen = true;
+    if (bubble.querySelector(".chirp-menu")) { closeMenu(); return; }
 
-    menuEl = document.createElement("div");
+    const menuEl = document.createElement("div");
     menuEl.className = "chirp-menu";
 
     const clearBtn = document.createElement("button");
@@ -331,7 +327,8 @@ function openBubble(highlightId, selText, messages, onReady) {
     bubble.appendChild(menuEl);
 
     function onOutsideClick(ev) {
-      if (menuEl && !menuEl.contains(ev.target) && ev.target !== logo && !logo.contains(ev.target)) {
+      const m = bubble.querySelector(".chirp-menu");
+      if (m && !m.contains(ev.target) && ev.target !== logo && !logo.contains(ev.target)) {
         closeMenu();
         bubble.removeEventListener("mousedown", onOutsideClick, true);
       }
@@ -347,7 +344,7 @@ function openBubble(highlightId, selText, messages, onReady) {
 
   header.addEventListener("click", (e) => {
     if (e.target.closest("button") || e.target === logo) return;
-    if (menuOpen) { closeMenu(); return; }
+    if (bubble.querySelector(".chirp-menu")) { closeMenu(); return; }
     setBubbleState("minimized");
   });
 
@@ -423,7 +420,7 @@ function openBubble(highlightId, selText, messages, onReady) {
   input.addEventListener("keydown", (e) => {
     e.stopPropagation();
     if (e.key === "Escape") {
-      if (menuOpen) { closeMenu(); return; }
+      if (bubble.querySelector(".chirp-menu")) { closeMenu(); return; }
       if (activeStreamStop) {
         stopStreaming();
       } else {

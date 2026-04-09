@@ -467,6 +467,10 @@
   background: transparent;
 }
 
+.chirp-input::placeholder {
+  color: #9ca3af;
+}
+
 .chirp-send {
   position: absolute;
   right: 6px;
