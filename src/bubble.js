@@ -40,14 +40,16 @@ function initResize(bubble) {
     document.addEventListener("mouseup", onUp);
   }
 
-  // Left edge: dragging left grows width (dir = -1)
+  // Edges
   bubble.querySelector(".chirp-resize-left").addEventListener("mousedown", (e) => startResize(e, -1, 0));
-  // Right edge: dragging right grows width (dir = +1)
   bubble.querySelector(".chirp-resize-right").addEventListener("mousedown", (e) => startResize(e, +1, 0));
-  // Top edge: dragging up grows height (dir = -1)
   bubble.querySelector(".chirp-resize-top").addEventListener("mousedown", (e) => startResize(e, 0, -1));
-  // Bottom edge: dragging down grows height (dir = +1)
   bubble.querySelector(".chirp-resize-bottom").addEventListener("mousedown", (e) => startResize(e, 0, +1));
+  // Corners
+  bubble.querySelector(".chirp-resize-tl").addEventListener("mousedown", (e) => startResize(e, -1, -1));
+  bubble.querySelector(".chirp-resize-tr").addEventListener("mousedown", (e) => startResize(e, +1, -1));
+  bubble.querySelector(".chirp-resize-bl").addEventListener("mousedown", (e) => startResize(e, -1, +1));
+  bubble.querySelector(".chirp-resize-br").addEventListener("mousedown", (e) => startResize(e, +1, +1));
 }
 
 function initDrag(bubble, header) {
@@ -201,8 +203,8 @@ function openBubble(highlightId, selText, messages, onReady) {
   const bubble = document.createElement("div");
   bubble.className = "chirp-bubble";
 
-  // Resize handles on all four edges
-  for (const cls of ["chirp-resize-left", "chirp-resize-right", "chirp-resize-top", "chirp-resize-bottom"]) {
+  // Resize handles on all edges and corners
+  for (const cls of ["chirp-resize-left", "chirp-resize-right", "chirp-resize-top", "chirp-resize-bottom", "chirp-resize-tl", "chirp-resize-tr", "chirp-resize-bl", "chirp-resize-br"]) {
     const handle = document.createElement("div");
     handle.className = cls;
     bubble.appendChild(handle);

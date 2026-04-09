@@ -27,7 +27,11 @@
 .chirp-resize-left,
 .chirp-resize-right,
 .chirp-resize-top,
-.chirp-resize-bottom {
+.chirp-resize-bottom,
+.chirp-resize-tl,
+.chirp-resize-tr,
+.chirp-resize-bl,
+.chirp-resize-br {
   position: absolute;
   z-index: 1;
 }
@@ -55,6 +59,17 @@
   height: 6px;
   cursor: ns-resize;
 }
+
+.chirp-resize-tl, .chirp-resize-tr,
+.chirp-resize-bl, .chirp-resize-br {
+  width: 12px;
+  height: 12px;
+}
+
+.chirp-resize-tl { top: 0; left: 0; cursor: nwse-resize; }
+.chirp-resize-tr { top: 0; right: 0; cursor: nesw-resize; }
+.chirp-resize-bl { bottom: 0; left: 0; cursor: nesw-resize; }
+.chirp-resize-br { bottom: 0; right: 0; cursor: nwse-resize; }
 
 @keyframes chirp-fade-in {
   from { opacity: 0; transform: translateY(8px); }
@@ -141,7 +156,11 @@
 .chirp-minimized .chirp-resize-left,
 .chirp-minimized .chirp-resize-right,
 .chirp-minimized .chirp-resize-top,
-.chirp-minimized .chirp-resize-bottom {
+.chirp-minimized .chirp-resize-bottom,
+.chirp-minimized .chirp-resize-tl,
+.chirp-minimized .chirp-resize-tr,
+.chirp-minimized .chirp-resize-bl,
+.chirp-minimized .chirp-resize-br {
   display: none;
 }
 
