@@ -60,7 +60,6 @@ function initDrag(bubble, header) {
     if (e.target.closest("button")) return;
     if (bubble.classList.contains("chirp-expanded")) return;
 
-    e.preventDefault();
     const startX = e.clientX;
     const startY = e.clientY;
     const rect = bubble.getBoundingClientRect();
@@ -74,6 +73,7 @@ function initDrag(bubble, header) {
       if (!dragging) {
         if (Math.abs(dx) < DEAD_ZONE && Math.abs(dy) < DEAD_ZONE) return;
         dragging = true;
+        ev.preventDefault();
         didDrag = true;
         bubble.classList.add("chirp-dragging");
         // Switch to top/left positioning for free movement

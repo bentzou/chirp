@@ -132,6 +132,7 @@
 
 /* Minimized state — hide resize handles */
 .chirp-minimized {
+  height: auto;
   max-height: none;
   min-height: 0;
   resize: none;
