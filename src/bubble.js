@@ -7,6 +7,7 @@ const CHECK_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="1
 const EDIT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 const CHEVRON_LEFT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
 const CHEVRON_RIGHT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+const CLOSE_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>';
 
 let bubbleStylesReady = false;
 let userAtBottom = true;
@@ -778,7 +779,8 @@ function enterEditMode(userDiv) {
 
   const cancelBtn = document.createElement("button");
   cancelBtn.className = "chirp-edit-cancel";
-  cancelBtn.textContent = "Cancel";
+  cancelBtn.innerHTML = CLOSE_ICON;
+  cancelBtn.title = "Cancel";
   cancelBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     exitEditMode(userDiv);
@@ -786,7 +788,8 @@ function enterEditMode(userDiv) {
 
   const submitBtn = document.createElement("button");
   submitBtn.className = "chirp-edit-submit";
-  submitBtn.textContent = "Send";
+  submitBtn.innerHTML = SEND_ICON;
+  submitBtn.title = "Send";
   submitBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     commitEdit(userDiv, ta.value);
