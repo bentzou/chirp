@@ -682,40 +682,45 @@
 .chirp-msg-user.chirp-msg-editing {
   width: 85%;
   max-width: 85%;
+  padding: 6px;
+  border-bottom-right-radius: 12px;
 }
 
 .chirp-edit-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  position: relative;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #fff;
   min-width: 220px;
 }
 
-.chirp-edit-textarea {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: #fff;
-  color: #1a1a1a;
-  font-family: inherit;
-  font-size: 13px;
-  line-height: 1.4;
-  resize: none;
-  overflow-y: auto;
-  outline: none;
-  box-sizing: border-box;
-  max-height: 240px;
-}
-
-.chirp-edit-textarea:focus {
+.chirp-edit-wrap:focus-within {
   border-color: #f59e0b;
   box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
 }
 
+.chirp-edit-textarea {
+  width: 100%;
+  padding: 8px 68px 8px 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  resize: none;
+  overflow-y: auto;
+  line-height: 1.4;
+  max-height: 240px;
+  box-sizing: border-box;
+  background: transparent;
+  color: #1a1a1a;
+}
+
 .chirp-edit-actions {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   gap: 6px;
 }
