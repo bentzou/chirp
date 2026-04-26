@@ -72,7 +72,7 @@ function highlightRange(range, selText) {
   if (!contextValid()) return;
 
   // Open bubble with onReady callback to guarantee DOM exists before sending
-  openBubble(id, selText, [], (messagesArea) => {
+  openBubble(id, selText, serialized.messages, (messagesArea) => {
     if (startXPath && endXPath) {
       chrome.runtime.sendMessage({
         type: "saveHighlight",
@@ -86,7 +86,7 @@ function highlightRange(range, selText) {
     } else {
       sendMessage(id, selText, "In 1-2 sentences, explain this and relate it to the page if relevant.", messagesArea, { hidden: true });
     }
-  });
+  }, serialized);
 }
 
 // ── Restore highlights on page load ───────────────────────────────

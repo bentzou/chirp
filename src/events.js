@@ -146,7 +146,8 @@ document.addEventListener("click", (e) => {
   chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
     const hl = highlights?.find((h) => h.id === id);
     if (hl) {
-      openBubble(id, hl.text, hl.messages || []);
+      if (!hl.messages) hl.messages = [];
+      openBubble(id, hl.text, hl.messages, undefined, hl);
     }
   });
 });
@@ -175,7 +176,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (contextValid() && currentHighlightId !== msg.id) {
       chrome.runtime.sendMessage({ type: "getHighlights", url: location.href }, (highlights) => {
         const hl = highlights?.find((h) => h.id === msg.id);
-        if (hl) openBubble(msg.id, hl.text, hl.messages || []);
+        if (hl) {
+          if (!hl.messages) hl.messages = [];
+          openBubble(msg.id, hl.text, hl.messages, undefined, hl);
+        }
       });
     }
     sendResponse({ ok: true });

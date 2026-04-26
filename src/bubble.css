@@ -636,3 +636,170 @@
 .chirp-msg-error .chirp-copy-btn {
   display: none;
 }
+
+/* ── Per-message edit button ────────────────────────────────── */
+
+.chirp-edit-btn {
+  position: absolute;
+  top: 6px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  background: transparent;
+  color: #6b7280;
+  z-index: 1;
+}
+
+.chirp-msg-user.chirp-msg-editable .chirp-edit-btn {
+  display: flex;
+}
+
+.chirp-msg-user.chirp-msg-editable:hover .chirp-edit-btn {
+  opacity: 0.6;
+}
+
+.chirp-msg-user .chirp-edit-btn {
+  right: calc(100% + 30px);
+}
+
+.chirp-msg-loading .chirp-edit-btn,
+.chirp-msg-error .chirp-edit-btn,
+.chirp-msg-editing .chirp-edit-btn,
+.chirp-msg-editing .chirp-copy-btn {
+  display: none;
+}
+
+/* ── Inline edit-mode textarea ──────────────────────────────── */
+
+.chirp-msg-user.chirp-msg-editing {
+  width: 85%;
+  max-width: 85%;
+}
+
+.chirp-edit-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 220px;
+}
+
+.chirp-edit-textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #1a1a1a;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  resize: none;
+  overflow-y: auto;
+  outline: none;
+  box-sizing: border-box;
+  max-height: 240px;
+}
+
+.chirp-edit-textarea:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.chirp-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.chirp-edit-cancel,
+.chirp-edit-submit {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.chirp-edit-cancel {
+  background: #fff;
+  color: #374151;
+}
+
+.chirp-edit-cancel:hover {
+  background: #f3f4f6;
+}
+
+.chirp-edit-submit {
+  background: #fff;
+  color: #d97706;
+  font-weight: 600;
+}
+
+.chirp-edit-submit:hover {
+  background: #f3f4f6;
+}
+
+/* ── Version pager (under the user message bubble) ──────────── */
+
+.chirp-pager {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: -4px;
+  font-size: 11px;
+  color: #9ca3af;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.chirp-messages:hover .chirp-pager,
+.chirp-pager:focus-within {
+  opacity: 0.7;
+}
+
+.chirp-pager:hover {
+  opacity: 1;
+}
+
+.chirp-pager-btn {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #6b7280;
+}
+
+.chirp-pager-btn:hover:not(:disabled) {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.chirp-pager-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.chirp-pager-label {
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+.chirp-msg-rerolling + .chirp-pager {
+  display: none;
+}
