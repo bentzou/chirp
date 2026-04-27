@@ -685,8 +685,6 @@
 .chirp-msg-user.chirp-msg-editing {
   width: 85%;
   max-width: 85%;
-  padding: 6px;
-  border-bottom-right-radius: 12px;
 }
 
 .chirp-edit-wrap {
